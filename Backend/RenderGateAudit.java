@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.json.JSONArray;
 
 public final class RenderGateAudit {
     private RenderGateAudit() {}
@@ -155,23 +154,91 @@ public final class RenderGateAudit {
             return audit;
         }
         String raw = (String) value;
-        try {
-            JSONArray array = new JSONArray(raw);
-            audit.keysLen = array.length();
-            for (int i = 0; i < array.length(); i++) {
-                Object item = array.get(i);
-                if (!(item instanceof String)) {
-                    audit.failures.add("clothes_user_var_non_string_at_" + i);
-                    continue;
-                }
-                if ("-".equals(audit.firstKey)) {
-                    audit.firstKey = (String) item;
-                }
-            }
-        } catch (Exception e) {
-            audit.failures.add("clothes_user_var_invalid_json");
+        List<String> parsed = parseJsonStringArray(raw, audit.failures);
+        audit.keysLen = parsed.size();
+        if (!parsed.isEmpty()) {
+            audit.firstKey = parsed.get(0);
         }
         return audit;
+    }
+
+    private static List<String> parseJsonStringArray(String raw, List<String> failures) {
+        List<String> values = new ArrayList<>();
+        if (raw == null) {
+            failures.add("clothes_user_var_null");
+            return values;
+        }
+        String trimmed = raw.trim();
+        if (trimmed.isEmpty()) {
+            failures.add("clothes_user_var_empty");
+            return values;
+        }
+        if (!trimmed.startsWith("[") || !trimmed.endsWith("]")) {
+            failures.add("clothes_user_var_not_array");
+            return values;
+        }
+        String body = trimmed.substring(1, trimmed.length() - 1).trim();
+        if (body.isEmpty()) {
+            return values;
+        }
+        int i = 0;
+        boolean expectingValue = true;
+        while (i < body.length()) {
+            char c = body.charAt(i);
+            if (Character.isWhitespace(c)) {
+                i++;
+                continue;
+            }
+            if (expectingValue) {
+                if (c != '"') {
+                    failures.add("clothes_user_var_non_string_token_at_" + i);
+                    break;
+                }
+                i++;
+                StringBuilder current = new StringBuilder();
+                boolean closed = false;
+                boolean escaped = false;
+                while (i < body.length()) {
+                    char ch = body.charAt(i);
+                    if (escaped) {
+                        current.append(ch);
+                        escaped = false;
+                        i++;
+                        continue;
+                    }
+                    if (ch == '\\') {
+                        escaped = true;
+                        i++;
+                        continue;
+                    }
+                    if (ch == '"') {
+                        closed = true;
+                        i++;
+                        break;
+                    }
+                    current.append(ch);
+                    i++;
+                }
+                if (!closed) {
+                    failures.add("clothes_user_var_unterminated_string");
+                    break;
+                }
+                values.add(current.toString());
+                expectingValue = false;
+            } else {
+                if (c == ',') {
+                    expectingValue = true;
+                    i++;
+                } else {
+                    failures.add("clothes_user_var_missing_comma_at_" + i);
+                    break;
+                }
+            }
+        }
+        if (expectingValue && failures.isEmpty()) {
+            failures.add("clothes_user_var_trailing_comma");
+        }
+        return values;
     }
 
     private static final class ClothesUserVarAudit {

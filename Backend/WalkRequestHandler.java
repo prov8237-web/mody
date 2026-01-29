@@ -34,14 +34,24 @@ public class WalkRequestHandler extends OsBaseHandler {
 
         List<UserVariable> vars = new ArrayList<>();
         vars.add(new SFSUserVariable("target", target));
+        if (data.containsKey("speed")) {
+            try {
+                vars.add(new SFSUserVariable("speed", data.getDouble("speed")));
+            } catch (Exception e) {
+                trace("[WALKREQUEST] Invalid speed value");
+            }
+        }
         getApi().setUserVariables(user, vars);
+        trace("[MOVE_VARS_SET] stage=REQUEST target=" + target);
         user.setProperty("lastWalkTarget", target);
         state.setTarget(target);
 
         SFSObject res = new SFSObject();
         res.putInt("delay", DEFAULT_DELAY_MS);
+        res.putUtfString("target", target);
         reply(user, "walkrequest", res);
 
+        trace("[MOVE_ACK] stage=REQUEST delay=" + DEFAULT_DELAY_MS);
         trace("[WALKREQUEST] ✅ Target set to " + target);
     }
 }

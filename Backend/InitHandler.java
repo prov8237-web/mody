@@ -152,12 +152,14 @@ public class InitHandler extends OsBaseHandler {
         userVars.add(new SFSUserVariable("optimizedAssetKey", state.getOptimizedAssetKey()));
         getApi().setUserVariables(user, userVars);
         trace("[INIT] Set initial user variables");
+        trace("[USER_VARS_SET] stage=INIT count=" + userVars.size() + " user=" + user.getName());
         trace("[INIT] clothes userVar keys len=" + clothesKeysLen + " firstKey=" + firstClothesKey);
         
         // Set roles variable separately
         List<UserVariable> rolesVar = new ArrayList<>();
         rolesVar.add(new SFSUserVariable("roles", state.getRoles()));
         getApi().setUserVariables(user, rolesVar);
+        trace("[USER_VARS_SET] stage=INIT roles user=" + user.getName());
         
         // ═══════════════════════════════════════════════════════════
         // STEP 3: Send roles response (matching official)
@@ -173,18 +175,21 @@ public class InitHandler extends OsBaseHandler {
         List<UserVariable> posVars = new ArrayList<>();
         posVars.add(new SFSUserVariable("target", ""));
         getApi().setUserVariables(user, posVars);
+        trace("[USER_VARS_SET] stage=INIT target user=" + user.getName());
         
         List<UserVariable> statusVars = new ArrayList<>();
         statusVars.add(new SFSUserVariable("status", "idle"));
         statusVars.add(new SFSUserVariable("position", "20,30"));
         statusVars.add(new SFSUserVariable("direction", 0));
         getApi().setUserVariables(user, statusVars);
+        trace("[USER_VARS_SET] stage=INIT status user=" + user.getName());
         state.setPosition("20,30");
         state.setDirection(0);
         
         List<UserVariable> speedVars = new ArrayList<>();
         speedVars.add(new SFSUserVariable("speed", 1.0));
         getApi().setUserVariables(user, speedVars);
+        trace("[USER_VARS_SET] stage=INIT speed user=" + user.getName());
 
         for (String line : RenderGateAudit.audit(user, state, "INIT")) {
             trace(line);
@@ -250,6 +255,7 @@ public class InitHandler extends OsBaseHandler {
         res.putInt("emailActive", 0);
         res.putBool("guest", true);
         state.setGuest(true);
+        trace("[GUEST_CREATED] user=" + user.getName() + " guest=true playerID=" + customID);
         res.putBool("isBanned", false);
         res.putInt("completedAchievementsCount", 0);
         res.putInt("tutorialStep", 0);
@@ -351,6 +357,7 @@ public class InitHandler extends OsBaseHandler {
                 InMemoryStore.RoomState roomState = store.getOrCreateRoom(targetRoom);
                 ensureMandatoryRoomVars(targetRoom, roomState, "INIT");
                 if (user.getLastJoinedRoom() == null) {
+                    trace("[JOIN_ROOM] stage=INIT user=" + user.getName() + " room=" + targetRoom.getName());
                     getApi().joinRoom(user, targetRoom);
                     trace("[INIT] Joined room: street01");
                     state.setCurrentRoom("street01");

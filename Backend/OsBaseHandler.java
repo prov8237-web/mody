@@ -91,6 +91,8 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
 
         if (!vars.isEmpty()) {
             getApi().setRoomVariables(null, room, vars);
+            trace("[ROOM_VARS_BROADCAST] stage=" + stage + " room=" + room.getName()
+                + " vars=" + collectRoomVarNames(vars));
         }
 
         boolean hasInteractive = room.containsVariable("isInteractiveRoom") || containsRoomVar(vars, "isInteractiveRoom");
@@ -111,5 +113,19 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
             }
         }
         return false;
+    }
+
+    private String collectRoomVarNames(List<RoomVariable> vars) {
+        StringBuilder builder = new StringBuilder();
+        for (RoomVariable var : vars) {
+            if (var == null) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(",");
+            }
+            builder.append(var.getName());
+        }
+        return builder.toString();
     }
 }

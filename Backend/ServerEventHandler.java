@@ -70,6 +70,7 @@ public class ServerEventHandler extends BaseServerEventHandler {
         roomVars.add(new SFSRoomVariable("isGameStarted", false));
         roomVars.add(new SFSRoomVariable("isGameEnded", false));
         getApi().setRoomVariables(null, room, roomVars, false, false, false);
+        trace("[ROOM_VARS_BROADCAST] stage=USER_JOIN_ROOM room=" + room.getName() + " vars=doors,bots,grid,isInteractiveRoom,isGameStarted,isGameEnded");
         trace("[SERVER_EVENT] USER_JOIN_ROOM room vars for " + room.getName());
 
         for (String line : RenderGateAudit.audit(user, userState, "ROOM_JOIN")) {

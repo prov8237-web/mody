@@ -36,17 +36,20 @@ public class WalkFinalRequestHandler extends OsBaseHandler {
         List<UserVariable> vars = new ArrayList<>();
         vars.add(new SFSUserVariable("position", target));
         vars.add(new SFSUserVariable("status", "idle"));
-        vars.add(new SFSUserVariable("target", "")); // Clear target
         getApi().setUserVariables(user, vars);
+        trace("[MOVE_VARS_SET] stage=FINAL position=" + target + " status=idle");
         
         // Update state
         state.setPosition(target);
-        state.setTarget("");
+        state.setTarget(target);
         
         trace("[WALKFINAL] ✅ Position updated to " + target);
-        
+
         // Send empty response
         SFSObject res = new SFSObject();
+        res.putUtfString("position", target);
+        res.putUtfString("status", "idle");
         send("walkfinalrequest", res, user);
+        trace("[MOVE_ACK] stage=FINAL user=" + user.getName() + " position=" + target);
     }
 }
