@@ -36,12 +36,11 @@ Look for these in order during a clean init + join:
 
 ## Expected server log lines (movement sequence)
 1. **Walk request acknowledged:**
-   - `[MOVE_VARS_SET] stage=REQUEST user=<name> target=<x,y>`
-   - `[MOVE_BROADCAST] stage=REQUEST user=<name> keys=target`
-   - `[MOVE_ACK] stage=REQUEST user=<name> delay=<ms> target=<x,y>`
+   - `[MOVE_VARS_SET] stage=REQUEST from=<x,y> target=<x,y> dist=<d>`
+   - `[MOVE_VARS_META] stage=REQUEST speedSet=<true|false> delay=<ms>`
+   - `[MOVE_ACK] stage=REQUEST delay=<ms>`
 2. **Walk final update:**
-   - `[MOVE_VARS_SET] stage=FINAL user=<name> position=<x,y> status=idle target=clear`
-   - `[MOVE_BROADCAST] stage=FINAL user=<name> keys=position,status,target`
+   - `[MOVE_VARS_SET] stage=FINAL position=<x,y> status=idle source=<client|target|property>`
    - `[MOVE_ACK] stage=FINAL user=<name> position=<x,y>`
 
 ## Quick smoke test checklist
@@ -49,4 +48,6 @@ Look for these in order during a clean init + join:
 2. Verify the log sequence above appears in order.
 3. Confirm `clothesKeysLen` is non-zero and the first key looks like `<clip>_<color>`.
 4. Ensure room variables are set **before** the client’s join handler (no missing `grid/doors/bots` errors).
-5. Confirm the local avatar appears immediately on room entry while bots remain visible.
+5. Click a nearby tile (1-2 tiles away) and confirm delay >= minDelay.
+6. Click a far tile (e.g., 40,13) and confirm delay is noticeably higher than near clicks.
+7. Confirm the local avatar appears immediately on room entry while bots remain visible.

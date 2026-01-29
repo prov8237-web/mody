@@ -13,15 +13,28 @@ public class WalkFinalRequestHandler extends OsBaseHandler {
     @Override
     public void handleClientRequest(User user, ISFSObject params) {
         InMemoryStore.UserState state = getStore().getOrCreateUser(user);
+        ISFSObject data = data(params);
         
         // Get the target position that was set in WalkRequestHandler
         String target = state.getTarget();
+        String source = "target";
+        if (data != null && data.containsKey("x") && data.containsKey("y")) {
+            try {
+                int x = data.getInt("x");
+                int y = data.getInt("y");
+                target = x + "," + y;
+                source = "client";
+            } catch (Exception e) {
+                trace("[WALKFINAL] Invalid x/y in request");
+            }
+        }
         
         if (target == null || target.isEmpty()) {
             // Try to get from user property
             Object lastTarget = user.getProperty("lastWalkTarget");
             if (lastTarget != null) {
                 target = (String) lastTarget;
+                source = "property";
             }
         }
         
@@ -37,7 +50,7 @@ public class WalkFinalRequestHandler extends OsBaseHandler {
         vars.add(new SFSUserVariable("position", target));
         vars.add(new SFSUserVariable("status", "idle"));
         getApi().setUserVariables(user, vars);
-        trace("[MOVE_VARS_SET] stage=FINAL position=" + target + " status=idle");
+        trace("[MOVE_VARS_SET] stage=FINAL position=" + target + " status=idle source=" + source);
         
         // Update state
         state.setPosition(target);
