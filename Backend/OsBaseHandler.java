@@ -40,6 +40,24 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
         send(cmd, res, user);
     }
 
+    protected void replyToRequest(User user, String cmd, ISFSObject res, ISFSObject requestParams) {
+        if (res == null) {
+            res = new SFSObject();
+        }
+        ProtocolValidator.validateResponse(cmd, res, this);
+        send(cmd, res, user);
+        int rid = extractRid(requestParams);
+        trace("[MOVE_RESP] cmd=" + cmd + " type=RESPONSE rid=" + rid + " keys=" + res.getKeys());
+        try {
+            MainExtension mainExt = (MainExtension) getParentExtension();
+            if (mainExt != null) {
+                mainExt.markResponseSent(cmd, user);
+            }
+        } catch (Exception e) {
+            // Silent
+        }
+    }
+
     protected ISFSObject data(ISFSObject params) {
         return HandlerUtils.dataOrSelf(params);
     }
@@ -113,6 +131,23 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
             }
         }
         return false;
+    }
+
+    protected int extractRid(ISFSObject params) {
+        if (params == null) {
+            return -1;
+        }
+        try {
+            if (params.containsKey("rid")) {
+                return params.getInt("rid");
+            }
+            if (params.containsKey("requestId")) {
+                return params.getInt("requestId");
+            }
+        } catch (Exception e) {
+            return -1;
+        }
+        return -1;
     }
 
     private String collectRoomVarNames(List<RoomVariable> vars) {

@@ -36,11 +36,14 @@ Look for these in order during a clean init + join:
 
 ## Expected server log lines (movement sequence)
 1. **Walk request acknowledged:**
-   - `[MOVE_VARS_SET] stage=REQUEST from=<x,y> target=<x,y> dist=<d>`
+   - `[MOVE_REQ] rid=<rid> user=<name> from=<x,y> to=<x,y> dist=<d> delay=<ms> dir=<dir>`
    - `[MOVE_VARS_META] stage=REQUEST speedSet=<true|false> delay=<ms>`
+   - `[MOVE_RESP] cmd=walkrequest type=RESPONSE rid=<rid> keys=delay`
    - `[MOVE_ACK] stage=REQUEST delay=<ms>`
 2. **Walk final update:**
-   - `[MOVE_VARS_SET] stage=FINAL position=<x,y> status=idle source=<client|target|property>`
+   - `[MOVE_FINAL] rid=<rid> user=<name> pos=<x,y> dir=<dir> source=<client|target|property>`
+   - `[MOVE_VARS_SET] stage=FINAL position=<x,y> direction=<dir> status=idle source=<client|target|property>`
+   - `[MOVE_RESP] cmd=walkfinalrequest type=RESPONSE rid=<rid> keys=nextRequest`
    - `[MOVE_ACK] stage=FINAL user=<name> position=<x,y>`
 
 ## Quick smoke test checklist
