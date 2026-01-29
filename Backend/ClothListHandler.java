@@ -25,6 +25,11 @@ public class ClothListHandler extends OsBaseHandler {
                 }
             }
         }
+        if (items == null || items.size() == 0) {
+            items = DefaultClothesBuilder.buildDefaultItems(state.getGender());
+            state.setClothesItems(items);
+            trace("[CLOTHLIST] Rebuilt clothes payload with defaults. Count=" + items.size());
+        }
 
         SFSObject res = new SFSObject();
         res.putUtfString("type", "CLOTH");  // ✅ مهم جداً! الكلاينت يحتاج هذا الحقل

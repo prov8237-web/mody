@@ -18,6 +18,8 @@ public class TeleportHandler extends OsBaseHandler {
         Room targetRoom = getParentExtension().getParentZone().getRoomByName(roomKey);
         if (targetRoom != null) {
             try {
+                InMemoryStore.RoomState roomState = store.getOrCreateRoom(targetRoom);
+                ensureMandatoryRoomVars(targetRoom, roomState, "TELEPORT");
                 getApi().joinRoom(user, targetRoom);
                 state.setCurrentRoom(roomKey);
             } catch (Exception e) {

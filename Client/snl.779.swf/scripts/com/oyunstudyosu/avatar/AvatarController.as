@@ -686,7 +686,7 @@ package com.oyunstudyosu.avatar
             return;
          }
          var _loc5_:UserVariable = _loc7_.getVariable("clothes");
-         var _loc3_:Array = JSON.parse(_loc5_.getStringValue()) as Array;
+         var _loc3_:Array = AvatarModel.extractClothesKeys(JSON.parse(_loc5_.getStringValue()) as Array);
          _loc4_.setAccesory(_loc3_);
          if(_loc7_.isItMe)
          {

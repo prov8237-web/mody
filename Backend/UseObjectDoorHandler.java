@@ -16,6 +16,8 @@ public class UseObjectDoorHandler extends OsBaseHandler {
         Room targetRoomObj = getParentExtension().getParentZone().getRoomByName(targetRoom);
         if (targetRoomObj != null) {
             try {
+                InMemoryStore.RoomState roomState = store.getOrCreateRoom(targetRoomObj);
+                ensureMandatoryRoomVars(targetRoomObj, roomState, "USEOBJECTDOOR");
                 getApi().joinRoom(user, targetRoomObj);
                 state.setCurrentRoom(targetRoom);
             } catch (Exception e) {
