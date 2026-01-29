@@ -22,6 +22,7 @@ public class MainExtension extends SFSExtension {
         trace("════════════════════════════════════════════════════════");
         trace("🎮 MARHAB EXTENSION - OFFICIAL SERVER REPLICA v1.0");
         trace("════════════════════════════════════════════════════════");
+        trace("🎨 Local Avatar Rendering: ENABLED");
         
         // Core handlers - matching official server
         registerHandler("config", ConfigHandler.class);
