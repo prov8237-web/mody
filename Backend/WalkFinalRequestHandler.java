@@ -104,9 +104,9 @@ public class WalkFinalRequestHandler extends OsBaseHandler {
                 + " vars=" + snapshot);
             WalkRequestHandler.MoveTrace last = WalkRequestHandler.getMoveTrace(userId);
             if (last != null) {
-                long delta = ts - last.ts;
-                trace("[MOVE_TRACE] uid=" + userId + " lastRid=" + last.rid + " delta=" + delta
-                    + " reqTarget=" + last.target + " finalPos=" + pos);
+                long delta = ts - last.getTimestamp();
+                trace("[MOVE_TRACE] uid=" + userId + " lastRid=" + last.getRid() + " delta=" + delta
+                    + " reqTarget=" + last.getTarget() + " finalPos=" + pos);
                 WalkRequestHandler.clearMoveTrace(userId);
             }
             if (clientRid == -1) {

@@ -127,6 +127,18 @@ public class WalkRequestHandler extends OsBaseHandler {
             this.target = target;
             this.ts = ts;
         }
+
+        int getRid() {
+            return rid;
+        }
+
+        String getTarget() {
+            return target;
+        }
+
+        long getTimestamp() {
+            return ts;
+        }
     }
 
     private String resolveCurrentPosition(User user, InMemoryStore.UserState state) {
