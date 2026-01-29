@@ -14,6 +14,7 @@ public class WalkFinalRequestHandler extends OsBaseHandler {
     public void handleClientRequest(User user, ISFSObject params) {
         InMemoryStore.UserState state = getStore().getOrCreateUser(user);
         ISFSObject data = data(params);
+        logMoveFinal(user, params, data, state);
         
         // Get the target position that was set in WalkRequestHandler
         String target = state.getTarget();
@@ -73,6 +74,47 @@ public class WalkFinalRequestHandler extends OsBaseHandler {
         res.putInt("rid", clientRid);
         replyToRequest(user, "walkfinalrequest", res, params);
         trace("[MOVE_ACK] stage=FINAL user=" + user.getName() + " position=" + target);
+    }
+
+    private void logMoveFinal(User user, ISFSObject params, ISFSObject data, InMemoryStore.UserState state) {
+        try {
+            long ts = System.currentTimeMillis();
+            int userId = user != null ? user.getId() : -1;
+            String userName = user != null ? user.getName() : "null";
+            String roomName = user != null && user.getLastJoinedRoom() != null ? user.getLastJoinedRoom().getName() : "null";
+            int roomId = user != null && user.getLastJoinedRoom() != null ? user.getLastJoinedRoom().getId() : -1;
+            int clientRid = getClientRid(params);
+            String avatarId = readUserVarAsString(user, "avatarID", "avatarId");
+            String playerId = readUserVarAsString(user, "playerID", "playerId");
+            String pos = readString(data, "position");
+            if (pos == null || "missing".equals(pos)) {
+                String x = readString(data, "x");
+                String y = readString(data, "y");
+                if (!"missing".equals(x) && !"missing".equals(y)) {
+                    pos = x + "," + y;
+                }
+            }
+            String posType = valueType(data, "position", pos);
+            String direction = readUserVarAsString(user, "direction");
+            String status = readUserVarAsString(user, "status");
+            String snapshot = buildVarSnapshot(user, data);
+            trace("[MOVE_FINAL] ts=" + ts + " room=" + roomId + "/" + roomName + " uid=" + userId + " uname=" + userName
+                + " rid=" + clientRid + " avatarId=" + avatarId + " playerId=" + playerId
+                + " pos=" + pos + " posType=" + posType + " direction=" + direction + " status=" + status
+                + " vars=" + snapshot);
+            WalkRequestHandler.MoveTrace last = WalkRequestHandler.getMoveTrace(userId);
+            if (last != null) {
+                long delta = ts - last.ts;
+                trace("[MOVE_TRACE] uid=" + userId + " lastRid=" + last.rid + " delta=" + delta
+                    + " reqTarget=" + last.target + " finalPos=" + pos);
+                WalkRequestHandler.clearMoveTrace(userId);
+            }
+            if (clientRid == -1) {
+                trace("[WARN] rid=-1 may indicate client not correlating responses; check protocol.");
+            }
+        } catch (Exception e) {
+            trace("[MOVE_FINAL] log failed: " + e.getMessage());
+        }
     }
 
     private String resolveCurrentPosition(User user, InMemoryStore.UserState state) {

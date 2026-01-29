@@ -47,7 +47,7 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
         ProtocolValidator.validateResponse(cmd, res, this);
         send(cmd, res, user);
         int clientRid = getClientRid(requestParams);
-        trace("[MOVE_RESP] cmd=" + cmd + " type=RESPONSE rid=" + clientRid + " keys=" + res.getKeys());
+        trace("[MOVE_RESP] cmd=" + cmd + " type=RESPONSE clientRid=" + clientRid + " keys=" + res.getKeys());
         try {
             MainExtension mainExt = (MainExtension) getParentExtension();
             if (mainExt != null) {
@@ -151,6 +151,80 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
             return -1;
         }
         return -1;
+    }
+
+    protected String readString(ISFSObject obj, String key) {
+        if (obj == null || key == null || !obj.containsKey(key)) {
+            return "missing";
+        }
+        try {
+            return obj.getUtfString(key);
+        } catch (Exception e) {
+            try {
+                Object value = obj.get(key);
+                return value == null ? "null" : String.valueOf(value);
+            } catch (Exception ignored) {
+                return "invalid";
+            }
+        }
+    }
+
+    protected String readUserVarAsString(User user, String... keys) {
+        if (user == null || keys == null) {
+            return "null";
+        }
+        for (String key : keys) {
+            if (key == null) {
+                continue;
+            }
+            try {
+                UserVariable var = user.getVariable(key);
+                if (var == null || var.getValue() == null) {
+                    continue;
+                }
+                Object value = var.getValue();
+                return String.valueOf(value);
+            } catch (Exception e) {
+                return "invalid";
+            }
+        }
+        return "null";
+    }
+
+    protected String buildVarSnapshot(User user, ISFSObject params) {
+        String position = readUserVarAsString(user, "position");
+        if ("null".equals(position) || "invalid".equals(position)) {
+            position = readString(params, "position");
+        }
+        String clothes = readUserVarAsString(user, "clothes");
+        if ("null".equals(clothes) || "invalid".equals(clothes)) {
+            clothes = readString(params, "clothes");
+        }
+        String imgPath = readUserVarAsString(user, "imgPath");
+        if ("null".equals(imgPath) || "invalid".equals(imgPath)) {
+            imgPath = readString(params, "imgPath");
+        }
+        String optimizedAssetKey = readUserVarAsString(user, "optimizedAssetKey");
+        if ("null".equals(optimizedAssetKey) || "invalid".equals(optimizedAssetKey)) {
+            optimizedAssetKey = readString(params, "optimizedAssetKey");
+        }
+        return "{position=" + position + ",clothes=" + clothes + ",imgPath=" + imgPath
+            + ",optimizedAssetKey=" + optimizedAssetKey + "}";
+    }
+
+    protected String valueType(ISFSObject obj, String key, String fallbackValue) {
+        if (obj != null && key != null && obj.containsKey(key)) {
+            try {
+                Object value = obj.get(key);
+                return value == null ? "null" : value.getClass().getSimpleName();
+            } catch (Exception e) {
+                return "invalid";
+            }
+        }
+        if (fallbackValue == null) {
+            return "null";
+        }
+        return "String";
     }
 
     private String collectRoomVarNames(List<RoomVariable> vars) {
