@@ -46,8 +46,8 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
         }
         ProtocolValidator.validateResponse(cmd, res, this);
         send(cmd, res, user);
-        int rid = extractRid(requestParams);
-        trace("[MOVE_RESP] cmd=" + cmd + " type=RESPONSE rid=" + rid + " keys=" + res.getKeys());
+        int clientRid = getClientRid(requestParams);
+        trace("[MOVE_RESP] cmd=" + cmd + " type=RESPONSE rid=" + clientRid + " keys=" + res.getKeys());
         try {
             MainExtension mainExt = (MainExtension) getParentExtension();
             if (mainExt != null) {
@@ -133,16 +133,19 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
         return false;
     }
 
-    protected int extractRid(ISFSObject params) {
+    protected int getClientRid(ISFSObject params) {
         if (params == null) {
             return -1;
         }
         try {
+            if (params.containsKey("data")) {
+                ISFSObject data = params.getSFSObject("data");
+                if (data != null && data.containsKey("rid")) {
+                    return data.getInt("rid");
+                }
+            }
             if (params.containsKey("rid")) {
                 return params.getInt("rid");
-            }
-            if (params.containsKey("requestId")) {
-                return params.getInt("requestId");
             }
         } catch (Exception e) {
             return -1;

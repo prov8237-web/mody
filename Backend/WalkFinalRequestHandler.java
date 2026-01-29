@@ -49,8 +49,8 @@ public class WalkFinalRequestHandler extends OsBaseHandler {
         int[] targetCoords = parsePosition(target);
         int direction = computeDirection(currentCoords, targetCoords, state != null ? state.getDirection() : 1);
 
-        int rid = extractRid(params);
-        trace("[MOVE_FINAL] rid=" + rid + " user=" + user.getName() + " pos=" + target + " dir=" + direction + " source=" + source);
+        int clientRid = getClientRid(params);
+        trace("[MOVE_FINAL] clientRid=" + clientRid + " user=" + user.getName() + " pos=" + target + " dir=" + direction + " source=" + source);
 
         // Update position to the target
         List<UserVariable> vars = new ArrayList<>();
@@ -70,6 +70,7 @@ public class WalkFinalRequestHandler extends OsBaseHandler {
         // Send response
         SFSObject res = new SFSObject();
         res.putInt("nextRequest", 100);
+        res.putInt("rid", clientRid);
         replyToRequest(user, "walkfinalrequest", res, params);
         trace("[MOVE_ACK] stage=FINAL user=" + user.getName() + " position=" + target);
     }

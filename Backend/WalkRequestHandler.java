@@ -53,8 +53,8 @@ public class WalkRequestHandler extends OsBaseHandler {
             }
         }
         getApi().setUserVariables(user, vars);
-        int rid = extractRid(params);
-        trace("[MOVE_REQ] rid=" + rid + " user=" + user.getName() + " from=" + currentPosition + " to=" + target
+        int clientRid = getClientRid(params);
+        trace("[MOVE_REQ] clientRid=" + clientRid + " user=" + user.getName() + " from=" + currentPosition + " to=" + target
             + " dist=" + distance + " delay=" + delayMs + " dir=" + direction);
         trace("[MOVE_VARS_META] stage=REQUEST speedSet=" + speedSet + " delay=" + delayMs);
         user.setProperty("lastWalkTarget", target);
@@ -63,6 +63,7 @@ public class WalkRequestHandler extends OsBaseHandler {
 
         SFSObject res = new SFSObject();
         res.putInt("delay", delayMs);
+        res.putInt("rid", clientRid);
         replyToRequest(user, "walkrequest", res, params);
 
         trace("[MOVE_ACK] stage=REQUEST delay=" + delayMs);
