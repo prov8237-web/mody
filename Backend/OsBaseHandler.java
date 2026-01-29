@@ -138,20 +138,47 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
         if (params == null) {
             return -1;
         }
-        try {
-            if (params.containsKey("data")) {
-                ISFSObject data = params.getSFSObject("data");
-                if (data != null && data.containsKey("rid")) {
-                    return data.getInt("rid");
-                }
+        Integer rid = readRidFromObject(params);
+        if (rid != null) {
+            return rid;
+        }
+        if (params.containsKey("data")) {
+            ISFSObject data = params.getSFSObject("data");
+            rid = readRidFromObject(data);
+            if (rid != null) {
+                return rid;
             }
-            if (params.containsKey("rid")) {
-                return params.getInt("rid");
-            }
-        } catch (Exception e) {
-            return -1;
         }
         return -1;
+    }
+
+    private Integer readRidFromObject(ISFSObject obj) {
+        if (obj == null) {
+            return null;
+        }
+        String[] keys = new String[] {"rid", "clientRid"};
+        for (String key : keys) {
+            if (!obj.containsKey(key)) {
+                continue;
+            }
+            try {
+                long value = obj.getLong(key);
+                if (value > Integer.MAX_VALUE) {
+                    return Integer.MAX_VALUE;
+                }
+                if (value < Integer.MIN_VALUE) {
+                    return Integer.MIN_VALUE;
+                }
+                return (int) value;
+            } catch (Exception e) {
+                try {
+                    return obj.getInt(key);
+                } catch (Exception ignored) {
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 
     protected String readString(ISFSObject obj, String key) {

@@ -102,6 +102,12 @@ public class WalkRequestHandler extends OsBaseHandler {
             if (clientRid == -1) {
                 trace("[WARN] rid=-1 may indicate client not correlating responses; check protocol.");
             }
+            if (ProtocolConfig.movementTrace()) {
+                trace("{\"event\":\"MOVE_REQ\",\"cmd\":\"walkrequest\",\"rid\":" + clientRid
+                    + ",\"uid\":" + userId + ",\"roomId\":" + roomId
+                    + ",\"target\":\"" + target + "\",\"direction\":\"" + direction
+                    + "\",\"status\":\"" + status + "\"}");
+            }
             MoveTrace traceEntry = new MoveTrace(clientRid, target, ts);
             MOVE_TRACES.put(userId, traceEntry);
         } catch (Exception e) {

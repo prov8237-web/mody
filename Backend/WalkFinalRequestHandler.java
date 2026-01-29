@@ -108,9 +108,20 @@ public class WalkFinalRequestHandler extends OsBaseHandler {
                 trace("[MOVE_TRACE] uid=" + userId + " lastRid=" + last.getRid() + " delta=" + delta
                     + " reqTarget=" + last.getTarget() + " finalPos=" + pos);
                 WalkRequestHandler.clearMoveTrace(userId);
+                if (ProtocolConfig.movementTrace()) {
+                    trace("{\"event\":\"MOVE_TRACE\",\"uid\":" + userId + ",\"lastRid\":" + last.getRid()
+                        + ",\"delta\":" + delta + ",\"reqTarget\":\"" + last.getTarget()
+                        + "\",\"finalPos\":\"" + pos + "\"}");
+                }
             }
             if (clientRid == -1) {
                 trace("[WARN] rid=-1 may indicate client not correlating responses; check protocol.");
+            }
+            if (ProtocolConfig.movementTrace()) {
+                trace("{\"event\":\"MOVE_FINAL\",\"cmd\":\"walkfinalrequest\",\"rid\":" + clientRid
+                    + ",\"uid\":" + userId + ",\"roomId\":" + roomId
+                    + ",\"pos\":\"" + pos + "\",\"direction\":\"" + direction
+                    + "\",\"status\":\"" + status + "\"}");
             }
         } catch (Exception e) {
             trace("[MOVE_FINAL] log failed: " + e.getMessage());
