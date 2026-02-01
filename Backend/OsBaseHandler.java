@@ -121,6 +121,10 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
         return HandlerUtils.dataOrSelf(params);
     }
 
+    protected int keyCount(ISFSObject obj) {
+        return obj == null ? 0 : obj.getKeys().size();
+    }
+
     protected InMemoryStore getStore() {
         MainExtension ext = (MainExtension) getParentExtension();
         return ext != null ? ext.getStore() : new InMemoryStore();

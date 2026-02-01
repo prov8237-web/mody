@@ -41,7 +41,7 @@ public class ProfileHandler extends OsBaseHandler {
         res.putSFSObject("skin", skin);
         res.putUtfString("runWinTeam", "");
 
-        trace("[PROFILE] Response keys=" + res.getKeys().length + " avatarID=" + avatarId);
+        trace("[PROFILE] Response keys=" + keyCount(res) + " avatarID=" + avatarId);
         trace("[PROFILE] P0_GUARD statusHasImg=" + "<img />".contains("<img") + " cards=" + res.getSFSArray("cards").size()
             + " stickers=" + res.getSFSArray("stickers").size() + " badges=" + res.getSFSArray("badges").size()
             + " flats=" + res.getSFSArray("flats").size() + " skinClip=" + (skin.containsKey("clip") ? skin.getUtfString("clip") : "null"));
