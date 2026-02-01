@@ -6,6 +6,7 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.entities.variables.SFSRoomVariable;
+import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,24 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
         }
         ProtocolValidator.validateResponse(cmd, res, this);
         send(cmd, res, user);
+    }
+
+    protected void replyToRequest(User user, String cmd, ISFSObject res, ISFSObject requestParams) {
+        if (res == null) {
+            res = new SFSObject();
+        }
+        ProtocolValidator.validateResponse(cmd, res, this);
+        send(cmd, res, user);
+        int clientRid = getClientRid(requestParams);
+        trace("[MOVE_RESP] cmd=" + cmd + " type=RESPONSE clientRid=" + clientRid + " keys=" + res.getKeys());
+        try {
+            MainExtension mainExt = (MainExtension) getParentExtension();
+            if (mainExt != null) {
+                mainExt.markResponseSent(cmd, user);
+            }
+        } catch (Exception e) {
+            // Silent
+        }
     }
 
     protected ISFSObject data(ISFSObject params) {
@@ -91,6 +110,8 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
 
         if (!vars.isEmpty()) {
             getApi().setRoomVariables(null, room, vars);
+            trace("[ROOM_VARS_BROADCAST] stage=" + stage + " room=" + room.getName()
+                + " vars=" + collectRoomVarNames(vars));
         }
 
         boolean hasInteractive = room.containsVariable("isInteractiveRoom") || containsRoomVar(vars, "isInteractiveRoom");
@@ -111,5 +132,140 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
             }
         }
         return false;
+    }
+
+    protected int getClientRid(ISFSObject params) {
+        if (params == null) {
+            return -1;
+        }
+        Integer rid = readRidFromObject(params);
+        if (rid != null) {
+            return rid;
+        }
+        if (params.containsKey("data")) {
+            ISFSObject data = params.getSFSObject("data");
+            rid = readRidFromObject(data);
+            if (rid != null) {
+                return rid;
+            }
+        }
+        return -1;
+    }
+
+    private Integer readRidFromObject(ISFSObject obj) {
+        if (obj == null) {
+            return null;
+        }
+        String[] keys = new String[] {"rid", "clientRid"};
+        for (String key : keys) {
+            if (!obj.containsKey(key)) {
+                continue;
+            }
+            try {
+                long value = obj.getLong(key);
+                if (value > Integer.MAX_VALUE) {
+                    return Integer.MAX_VALUE;
+                }
+                if (value < Integer.MIN_VALUE) {
+                    return Integer.MIN_VALUE;
+                }
+                return (int) value;
+            } catch (Exception e) {
+                try {
+                    return obj.getInt(key);
+                } catch (Exception ignored) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected String readString(ISFSObject obj, String key) {
+        if (obj == null || key == null || !obj.containsKey(key)) {
+            return "missing";
+        }
+        try {
+            return obj.getUtfString(key);
+        } catch (Exception e) {
+            try {
+                Object value = obj.get(key);
+                return value == null ? "null" : String.valueOf(value);
+            } catch (Exception ignored) {
+                return "invalid";
+            }
+        }
+    }
+
+    protected String readUserVarAsString(User user, String... keys) {
+        if (user == null || keys == null) {
+            return "null";
+        }
+        for (String key : keys) {
+            if (key == null) {
+                continue;
+            }
+            try {
+                UserVariable var = user.getVariable(key);
+                if (var == null || var.getValue() == null) {
+                    continue;
+                }
+                Object value = var.getValue();
+                return String.valueOf(value);
+            } catch (Exception e) {
+                return "invalid";
+            }
+        }
+        return "null";
+    }
+
+    protected String buildVarSnapshot(User user, ISFSObject params) {
+        String position = readUserVarAsString(user, "position");
+        if ("null".equals(position) || "invalid".equals(position)) {
+            position = readString(params, "position");
+        }
+        String clothes = readUserVarAsString(user, "clothes");
+        if ("null".equals(clothes) || "invalid".equals(clothes)) {
+            clothes = readString(params, "clothes");
+        }
+        String imgPath = readUserVarAsString(user, "imgPath");
+        if ("null".equals(imgPath) || "invalid".equals(imgPath)) {
+            imgPath = readString(params, "imgPath");
+        }
+        String optimizedAssetKey = readUserVarAsString(user, "optimizedAssetKey");
+        if ("null".equals(optimizedAssetKey) || "invalid".equals(optimizedAssetKey)) {
+            optimizedAssetKey = readString(params, "optimizedAssetKey");
+        }
+        return "{position=" + position + ",clothes=" + clothes + ",imgPath=" + imgPath
+            + ",optimizedAssetKey=" + optimizedAssetKey + "}";
+    }
+
+    protected String valueType(ISFSObject obj, String key, String fallbackValue) {
+        if (obj != null && key != null && obj.containsKey(key)) {
+            try {
+                Object value = obj.get(key);
+                return value == null ? "null" : value.getClass().getSimpleName();
+            } catch (Exception e) {
+                return "invalid";
+            }
+        }
+        if (fallbackValue == null) {
+            return "null";
+        }
+        return "String";
+    }
+
+    private String collectRoomVarNames(List<RoomVariable> vars) {
+        StringBuilder builder = new StringBuilder();
+        for (RoomVariable var : vars) {
+            if (var == null) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append(",");
+            }
+            builder.append(var.getName());
+        }
+        return builder.toString();
     }
 }

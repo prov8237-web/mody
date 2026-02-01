@@ -118,7 +118,6 @@ public class MainExtension extends SFSExtension {
     
     private void registerHandler(String command, Class<?> handlerClass) {
         addRequestHandler(command, handlerClass);
-        addRequestHandler("walkfinalrequest", WalkFinalRequestHandler.class);
         registeredHandlers.add(command);
     }
 

@@ -11,6 +11,10 @@ public final class ProtocolConfig {
         return readFlag("DEV_FALLBACK");
     }
 
+    public static boolean movementTrace() {
+        return readFlag("MOVE_TRACE");
+    }
+
     private static boolean readFlag(String key) {
         String value = System.getProperty(key);
         if (value == null || value.isEmpty()) {
