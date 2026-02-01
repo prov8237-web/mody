@@ -641,20 +641,22 @@ package org.oyunstudyosu.sanalika.panels.profile
          char = Connectr.instance.engine.scene.getAvatarById(this.avatarID);
          if(char == null)
          {
-            close();
-            return;
+            trace("PROFILE_PANEL: avatar not in scene, skipping character preview");
          }
-         if(this.charPreview)
+         else
          {
-            this.charPreview.terminate();
-         }
-         this.charPreview = Connectr.instance.clothModel.getNewCharPreview(this.charHolder,char,true);
-         this.charPreview.rotate(5);
-         if(!char.isMe)
-         {
-            this.menu = new ProfileMenu(this.avatarID,data.isBuddy,data.isRequest,data.banCount);
-            this.addChildAt(this.menu,0);
-            this.menu.x = 0;
+            if(this.charPreview)
+            {
+               this.charPreview.terminate();
+            }
+            this.charPreview = Connectr.instance.clothModel.getNewCharPreview(this.charHolder,char,true);
+            this.charPreview.rotate(5);
+            if(!char.isMe)
+            {
+               this.menu = new ProfileMenu(this.avatarID,data.isBuddy,data.isRequest,data.banCount);
+               this.addChildAt(this.menu,0);
+               this.menu.x = 0;
+            }
          }
          this.profileStickerContainer = new ProfileStickerContainer();
          this.profileStickerContainer.init(data.cards,data.stickers);
@@ -670,7 +672,7 @@ package org.oyunstudyosu.sanalika.panels.profile
          {
             this.profileSkinContainer.dispose();
          }
-         if(char.isMe)
+         if(char != null && char.isMe)
          {
             if(this.profileSkinContainer == null)
             {
@@ -765,7 +767,7 @@ package org.oyunstudyosu.sanalika.panels.profile
          this.btnImproper.visible = false;
          this.btnImproperStatus.visible = false;
          this.btnImproperCity.visible = false;
-         if(Boolean(Connectr.instance.avatarModel.permission.check(AvatarPermission.SECURITY)) && !char.isMe)
+         if(Boolean(Connectr.instance.avatarModel.permission.check(AvatarPermission.SECURITY)) && (char == null || !char.isMe))
          {
             Connectr.instance.toolTipModel.addTip(this.btnImproper,$("improperName"),TooltipAlign.ALIGN_RIGHT);
             Connectr.instance.toolTipModel.addTip(this.btnImproperStatus,$("improperStatus"),TooltipAlign.ALIGN_RIGHT);
