@@ -54,7 +54,7 @@ public class ProfileHandler extends OsBaseHandler {
         trace("[PROFILE] Response keys=" + keyCount(res) + " avatarID=" + avatarId);
         trace("[PROFILE] PayloadTypes=" + payloadTypes(res));
         trace("RID_CHECK cmd=profile reqRid=" + rid + " resRid=" + rid + " avatarID=" + avatarId);
-        reply(user, "profile", res);
+        sendResponseWithRid("profile", res, user, rid);
     }
 
     private String resolveAvatarId(ISFSObject data) {
