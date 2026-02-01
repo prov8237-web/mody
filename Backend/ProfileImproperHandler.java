@@ -11,9 +11,15 @@ public class ProfileImproperHandler extends OsBaseHandler {
         ISFSObject data = data(params);
         String avatarId = readField(data, "avatarID", "Unknown");
         String action = readField(data, "action", "unknown");
+        int rid = getClientRid(params);
 
         trace("[PROFILEIMPROPER] avatarID=" + avatarId + " action=" + action + " user=" + user.getName());
-        reply(user, "profileimproper", new SFSObject());
+        SFSObject res = new SFSObject();
+        if (rid > 0) {
+            res.putInt("rid", rid);
+        }
+        res.putUtfString("__cmd", "profileimproper");
+        reply(user, "profileimproper", res);
     }
 
     private String readField(ISFSObject data, String key, String fallback) {

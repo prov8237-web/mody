@@ -11,6 +11,7 @@ public class ProfileHandler extends OsBaseHandler {
     public void handleClientRequest(User user, ISFSObject params) {
         ISFSObject data = data(params);
         String avatarId = resolveAvatarId(data);
+        int rid = getClientRid(params);
 
         trace("[PROFILE] Request avatarID=" + avatarId + " user=" + user.getName());
 
@@ -32,8 +33,18 @@ public class ProfileHandler extends OsBaseHandler {
         res.putUtfString("avatarCity", "");
         res.putUtfString("avatarAge", "");
         res.putInt("emailRegistered", 0);
-        res.putSFSObject("skin", new SFSObject());
+        res.putInt("nextRequest", 0);
+        res.putInt("duration", 0);
+        SFSObject skin = new SFSObject();
+        skin.putUtfString("clip", "0");
+        skin.putSFSObject("property", new SFSObject());
+        skin.putUtfString("roles", "");
+        res.putSFSObject("skin", skin);
         res.putUtfString("runWinTeam", "");
+        if (rid > 0) {
+            res.putInt("rid", rid);
+        }
+        res.putUtfString("__cmd", "profile");
 
         trace("[PROFILE] Response keys=" + res.getKeys().length + " avatarID=" + avatarId);
         reply(user, "profile", res);
