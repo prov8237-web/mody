@@ -12,7 +12,6 @@ public class ProfileSkinListHandler extends OsBaseHandler {
         int page = readInt(data, "page", 1);
         String search = readField(data, "search", "");
         String sort = readField(data, "sort", "created_desc");
-        int rid = getClientRid(params);
 
         trace("[PROFILESKINLIST] page=" + page + " search=" + search + " sort=" + sort + " user=" + user.getName());
 
@@ -21,11 +20,7 @@ public class ProfileSkinListHandler extends OsBaseHandler {
         items.putSFSArray("list", HandlerUtils.safeArray(null));
         res.putSFSObject("items", items);
         res.putInt("pageSelected", page);
-        if (rid > 0) {
-            res.putInt("rid", rid);
-        }
-        res.putUtfString("__cmd", "profileskinlist");
-        reply(user, "profileskinlist", res);
+        sendResponseWithRid("profileskinlist", res, user, params);
     }
 
     private String readField(ISFSObject data, String key, String fallback) {

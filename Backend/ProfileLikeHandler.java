@@ -11,18 +11,13 @@ public class ProfileLikeHandler extends OsBaseHandler {
         ISFSObject data = data(params);
         String avatarId = readField(data, "avatarID", "Unknown");
         int avatarLike = readInt(data, "avatarLike", 0);
-        int rid = getClientRid(params);
 
         trace("[PROFILELIKE] avatarID=" + avatarId + " like=" + avatarLike + " user=" + user.getName());
 
         SFSObject res = new SFSObject();
         res.putInt("likeCount", 0);
         res.putInt("dislikeCount", 0);
-        if (rid > 0) {
-            res.putInt("rid", rid);
-        }
-        res.putUtfString("__cmd", "profilelike");
-        reply(user, "profilelike", res);
+        sendResponseWithRid("profilelike", res, user, params);
     }
 
     private String readField(ISFSObject data, String key, String fallback) {

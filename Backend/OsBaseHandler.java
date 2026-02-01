@@ -59,6 +59,28 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
         }
     }
 
+    protected void sendResponseWithRid(String cmd, ISFSObject res, User user, ISFSObject requestParams) {
+        if (res == null) {
+            res = new SFSObject();
+        }
+        int clientRid = getClientRid(requestParams);
+        if (clientRid > 0) {
+            res.putInt("rid", clientRid);
+        }
+        res.putUtfString("__cmd", cmd);
+        ProtocolValidator.validateResponse(cmd, res, this);
+        send(cmd, res, user);
+        trace("[RESP_WITH_RID] cmd=" + cmd + " type=RESPONSE clientRid=" + clientRid + " keys=" + res.getKeys());
+        try {
+            MainExtension mainExt = (MainExtension) getParentExtension();
+            if (mainExt != null) {
+                mainExt.markResponseSent(cmd, user);
+            }
+        } catch (Exception e) {
+            // Silent
+        }
+    }
+
     protected ISFSObject data(ISFSObject params) {
         return HandlerUtils.dataOrSelf(params);
     }

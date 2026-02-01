@@ -11,11 +11,12 @@ public class ProfileHandler extends OsBaseHandler {
     public void handleClientRequest(User user, ISFSObject params) {
         ISFSObject data = data(params);
         String avatarId = resolveAvatarId(data);
-        int rid = getClientRid(params);
 
+        trace("### PROFILE_HANDLER_V2 HIT ### rid=" + getClientRid(params) + " user=" + user.getName());
         trace("[PROFILE] Request avatarID=" + avatarId + " user=" + user.getName());
 
         SFSObject res = new SFSObject();
+        res.putUtfString("__debug", "PROFILE_HANDLER_V2");
         res.putUtfString("avatarName", avatarId);
         res.putUtfString("avarageRating", "0");
         res.putInt("totalBuddies", 0);
@@ -41,13 +42,9 @@ public class ProfileHandler extends OsBaseHandler {
         skin.putUtfString("roles", "");
         res.putSFSObject("skin", skin);
         res.putUtfString("runWinTeam", "");
-        if (rid > 0) {
-            res.putInt("rid", rid);
-        }
-        res.putUtfString("__cmd", "profile");
 
         trace("[PROFILE] Response keys=" + res.getKeys().length + " avatarID=" + avatarId);
-        reply(user, "profile", res);
+        sendResponseWithRid("profile", res, user, params);
     }
 
     private String resolveAvatarId(ISFSObject data) {
