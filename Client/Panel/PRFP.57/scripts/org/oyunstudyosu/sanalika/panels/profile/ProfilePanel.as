@@ -468,322 +468,400 @@ package org.oyunstudyosu.sanalika.panels.profile
          var profileBadgeContainerY:int;
          var data:Object = param1;
          Connectr.instance.serviceModel.removeRequestData(RequestDataKey.PROFILE,this.profileResponse);
+         if(data == null)
+         {
+            data = {};
+         }
          if(data.errorCode)
          {
             close();
             return;
          }
-         dragHandler = this.dragger;
-         this.sanalikaX.visible = false;
-         if(this.sName == null)
+         if(data.avatarName == null)
          {
-            this.sName = TextFieldManager.convertAsArabicTextField(this.getChildByName("nameTxt") as TextField,false,false);
-            this.sMood = TextFieldManager.convertAsArabicTextField(this.getChildByName("moodTxt") as TextField,false,false);
-            this.sStatus = TextFieldManager.convertAsArabicTextField(this.getChildByName("statusMessageTxt") as TextField,false,false);
-            this.stxtFlatCount = TextFieldManager.convertAsArabicTextField(this.getChildByName("txtFlatCount") as TextField,false,false);
-            this.stxtTeamInfo = TextFieldManager.convertAsArabicTextField(this.getChildByName("txtTeamInfo") as TextField,false,false);
-            this.editStatusMessageTextField = TextFieldManager.createNoneLanguageTextfield(this.getChildByName("editStatusMessageTxt") as TextField);
+            data.avatarName = "";
          }
-         TweenMax.to(this.background,0,{"colorTransform":{
-            "tint":0,
-            "tintAmount":0
-         }});
-         TweenMax.to(this.sName,0,{"colorTransform":{
-            "tint":16777215,
-            "tintAmount":0
-         }});
-         TweenMax.to(this.sMood,0,{"colorTransform":{
-            "tint":16777215,
-            "tintAmount":0
-         }});
-         TweenMax.to(this.infoTxt,0,{"colorTransform":{
-            "tint":16777215,
-            "tintAmount":0
-         }});
-         TweenMax.to(this.sStatus,0,{"colorTransform":{
-            "tint":16777215,
-            "tintAmount":0
-         }});
-         TweenMax.to(this.buddystatics,0,{"colorTransform":{
-            "tint":16777215,
-            "tintAmount":0
-         }});
-         this.txtShareLink.text = Connectr.instance.gameModel.webServer + "/landing/" + this.avatarID;
-         this.txtAvatarID.text = this.avatarID;
-         this.txtPlayerID.text = "";
-         Connectr.instance.toolTipModel.addTip(this.txtShareLink,$("ShareAndWin"));
-         this.txtShareLink.addEventListener(MouseEvent.CLICK,this.onShareLink);
-         this.sStatus.wordWrap = true;
-         Dispatcher.addEventListener(ProfileEvent.SHOW_PROFILE,this.updateProfile);
-         Connectr.instance.serviceModel.listenExtension(BuddyResponseTypes.BUDDY_ADDED,this.onBuddyAdded);
-         Connectr.instance.serviceModel.listenExtension(BuddyResponseTypes.BUDDY_REMOVED,this.onBuddyRemoved);
-         this.btnClose.addEventListener(MouseEvent.CLICK,this.onCloseClick);
-         this.buddystatics.visible = false;
-         Connectr.instance.toolTipModel.addTip(this.buddystatics,$("BuddyIndex"));
-         this.sMood.visible = false;
-         this.editButton.visible = false;
-         this.saveButton.visible = false;
-         this.editStatusMessageTextField.visible = false;
-         this.editButton.addEventListener(MouseEvent.CLICK,this.editClicked);
-         this.saveButton.addEventListener(MouseEvent.CLICK,this.saveClicked);
-         if(Connectr.instance.gameModel.language == "ar")
+         if(data.status == null)
          {
-            this.editStatusMessageTextField.maxChars = 150;
-            this.inputManager = new ArabicInputManager(this.editStatusMessageTextField,this.editStatusMessageTextField.defaultTextFormat);
+            data.status = "";
          }
-         this.buddystatics.visible = true;
-         if(data.mood)
+         if(data.avatarCity == null)
          {
-            this.state = data.mood;
+            data.avatarCity = "";
+         }
+         if(data.avatarAge == null)
+         {
+            data.avatarAge = "";
+         }
+         if(data.runWinTeam == null)
+         {
+            data.runWinTeam = "";
+         }
+         if(data.avarageRating == null)
+         {
+            data.avarageRating = "0";
          }
          else
          {
-            this.state = 0;
+            data.avarageRating = String(data.avarageRating);
          }
-         this.user = Sanalika.instance.serviceModel.sfs.userManager.getUserByName(this.avatarID);
-         trace(this.user.playerId);
-         if(this.user != null && this.user.containsVariable(CharacterVariable.PLAYER_ID))
+         data.mood = int(data.mood);
+         data.banCount = int(data.banCount);
+         data.emailRegistered = int(data.emailRegistered);
+         data.likeCount = int(data.likeCount);
+         data.dislikeCount = int(data.dislikeCount);
+         data.nextRequest = int(data.nextRequest);
+         data.duration = int(data.duration);
+         data.totalBuddies = int(data.totalBuddies);
+         data.isBuddy = Boolean(data.isBuddy);
+         data.isRequest = Boolean(data.isRequest);
+         if(!(data.cards is Array))
          {
-            this.playerID = this.user.getVariable(CharacterVariable.PLAYER_ID).getIntValue() + "";
+            data.cards = [];
          }
-         this.txtPlayerID.text = this.playerID;
-         if(this.avatarID == Connectr.instance.engine.scene.myChar.id)
+         if(!(data.stickers is Array))
          {
-            this.initMoods();
-            this.editButton.visible = true;
+            data.stickers = [];
+         }
+         if(!(data.badges is Array))
+         {
+            data.badges = [];
+         }
+         if(!(data.flats is Array))
+         {
+            data.flats = [];
+         }
+         if(data.skin == null)
+         {
+            data.skin = {};
+         }
+         if(!data.skin.hasOwnProperty("clip"))
+         {
+            data.skin.clip = null;
+         }
+         try
+         {
+            dragHandler = this.dragger;
+            this.sanalikaX.visible = false;
+            if(this.sName == null)
+            {
+               this.sName = TextFieldManager.convertAsArabicTextField(this.getChildByName("nameTxt") as TextField,false,false);
+               this.sMood = TextFieldManager.convertAsArabicTextField(this.getChildByName("moodTxt") as TextField,false,false);
+               this.sStatus = TextFieldManager.convertAsArabicTextField(this.getChildByName("statusMessageTxt") as TextField,false,false);
+               this.stxtFlatCount = TextFieldManager.convertAsArabicTextField(this.getChildByName("txtFlatCount") as TextField,false,false);
+               this.stxtTeamInfo = TextFieldManager.convertAsArabicTextField(this.getChildByName("txtTeamInfo") as TextField,false,false);
+               this.editStatusMessageTextField = TextFieldManager.createNoneLanguageTextfield(this.getChildByName("editStatusMessageTxt") as TextField);
+            }
+            TweenMax.to(this.background,0,{"colorTransform":{
+               "tint":0,
+               "tintAmount":0
+            }});
+            TweenMax.to(this.sName,0,{"colorTransform":{
+               "tint":16777215,
+               "tintAmount":0
+            }});
+            TweenMax.to(this.sMood,0,{"colorTransform":{
+               "tint":16777215,
+               "tintAmount":0
+            }});
+            TweenMax.to(this.infoTxt,0,{"colorTransform":{
+               "tint":16777215,
+               "tintAmount":0
+            }});
+            TweenMax.to(this.sStatus,0,{"colorTransform":{
+               "tint":16777215,
+               "tintAmount":0
+            }});
+            TweenMax.to(this.buddystatics,0,{"colorTransform":{
+               "tint":16777215,
+               "tintAmount":0
+            }});
+            this.txtShareLink.text = Connectr.instance.gameModel.webServer + "/landing/" + this.avatarID;
+            this.txtAvatarID.text = this.avatarID;
+            this.txtPlayerID.text = "";
+            Connectr.instance.toolTipModel.addTip(this.txtShareLink,$("ShareAndWin"));
+            this.txtShareLink.addEventListener(MouseEvent.CLICK,this.onShareLink);
+            this.sStatus.wordWrap = true;
+            Dispatcher.addEventListener(ProfileEvent.SHOW_PROFILE,this.updateProfile);
+            Connectr.instance.serviceModel.listenExtension(BuddyResponseTypes.BUDDY_ADDED,this.onBuddyAdded);
+            Connectr.instance.serviceModel.listenExtension(BuddyResponseTypes.BUDDY_REMOVED,this.onBuddyRemoved);
+            this.btnClose.addEventListener(MouseEvent.CLICK,this.onCloseClick);
+            this.buddystatics.visible = false;
+            Connectr.instance.toolTipModel.addTip(this.buddystatics,$("BuddyIndex"));
             this.sMood.visible = false;
-            this.sMood.text = "";
-            this.sStatus.text = "";
-            this.mcLike.buttonMode = false;
-            this.mcDislike.buttonMode = false;
-         }
-         else
-         {
-            this.mcLike.addEventListener(MouseEvent.CLICK,this.onLike);
-            this.mcLike.buttonMode = true;
-            this.mcDislike.addEventListener(MouseEvent.CLICK,this.onDislike);
-            this.mcDislike.buttonMode = true;
-            this.sMood.visible = true;
-            this.sMood.text = $(Connectr.instance.buddyModel.moods[this.state].label);
-         }
-         this.processLike(data);
-         if(data.banCount > 1)
-         {
-            this.mcBan.txt.text = data.banCount - 1;
-            this.mcBan.visible = true;
-            this.sStatus.text = $("profileStatus");
-         }
-         else
-         {
-            this.mcBan.visible = false;
-         }
-         if(data.emailRegistered == 1)
-         {
-            this.emailIcon.visible = true;
-            Connectr.instance.toolTipModel.addTip(this.emailIcon,$("Email Valid"));
-         }
-         else
-         {
-            this.emailIcon.visible = false;
-         }
-         this.infoTxt.text = "";
-         if(data.avatarCity)
-         {
-            this.infoTxt.text = data.avatarCity;
-         }
-         if(data.avatarAge)
-         {
-            this.avatarAge = data.avatarAge;
-            this.infoTxt.appendText(" / " + this.avatarAge);
-         }
-         this.infoTxt.mouseEnabled = false;
-         this.avatarName = data.avatarName;
-         if(this.avatarName.length > 15)
-         {
-            this.avatarName = this.avatarName.substr(0,12) + "...";
-         }
-         if(data.status)
-         {
-            this.cmnt = data.status;
-         }
-         else
-         {
-            this.cmnt = "";
-         }
-         this.buddystatics.totalBuddy = data.totalBuddies;
-         this.buddystatics.buddyRating = data.avarageRating;
-         imgRegExp = /<img[^>]+>/g;
-         imgTags = this.cmnt.match(imgRegExp);
-         if(data.banCount > 1)
-         {
-            this.sStatus.text = $("profileStatus");
-         }
-         else if(imgTags.length > 0)
-         {
-            this.sStatus.text = "";
-         }
-         else if(this.cmnt == "improperContent")
-         {
-            this.sStatus.text = $("improperContent");
-         }
-         else
-         {
-            this.sStatus.text = this.cmnt;
-         }
-         if(!hasEmbeddedAllGlyphs(this.avatarName,"Co Text Bold"))
-         {
-            this.avatarName += "????";
-         }
-         this.sName.text = this.avatarName;
-         this.sName.mouseEnabled = false;
-         this.txtAvatarID.addEventListener(MouseEvent.CLICK,this.copyAvatarID);
-         this.txtPlayerID.addEventListener(MouseEvent.CLICK,this.copyPlayerID);
-         char = Connectr.instance.engine.scene.getAvatarById(this.avatarID);
-         if(char == null)
-         {
-            trace("PROFILE_PANEL: avatar not in scene, skipping character preview");
-         }
-         else
-         {
-            if(this.charPreview)
+            this.editButton.visible = false;
+            this.saveButton.visible = false;
+            this.editStatusMessageTextField.visible = false;
+            this.editButton.addEventListener(MouseEvent.CLICK,this.editClicked);
+            this.saveButton.addEventListener(MouseEvent.CLICK,this.saveClicked);
+            if(Connectr.instance.gameModel.language == "ar")
             {
-               this.charPreview.terminate();
+               this.editStatusMessageTextField.maxChars = 150;
+               this.inputManager = new ArabicInputManager(this.editStatusMessageTextField,this.editStatusMessageTextField.defaultTextFormat);
             }
-            this.charPreview = Connectr.instance.clothModel.getNewCharPreview(this.charHolder,char,true);
-            this.charPreview.rotate(5);
-            if(!char.isMe)
+            this.buddystatics.visible = true;
+            if(data.mood)
             {
-               this.menu = new ProfileMenu(this.avatarID,data.isBuddy,data.isRequest,data.banCount);
-               this.addChildAt(this.menu,0);
-               this.menu.x = 0;
-            }
-         }
-         this.profileStickerContainer = new ProfileStickerContainer();
-         this.profileStickerContainer.init(data.cards,data.stickers);
-         this.addChildAt(this.profileStickerContainer,0);
-         profileStickerCardCount = data.stickers.length + data.cards.length;
-         profileStickerContainerX = 92;
-         if(profileStickerCardCount > 6)
-         {
-            profileStickerContainerX += int((profileStickerCardCount - 1) / 6) * 44;
-         }
-         this.btnSaveProfileSkin.visible = false;
-         if(this.profileSkinContainer != null)
-         {
-            this.profileSkinContainer.dispose();
-         }
-         if(char != null && char.isMe)
-         {
-            if(this.profileSkinContainer == null)
-            {
-               this.profileSkinContainer = new ProfileSkinContainer();
-               this.profileSkinContainer.init();
-               this.addChildAt(this.profileSkinContainer,0);
+               this.state = data.mood;
             }
             else
             {
+               this.state = 0;
+            }
+            this.user = Sanalika.instance.serviceModel.sfs.userManager.getUserByName(this.avatarID);
+            trace(this.user.playerId);
+            if(this.user != null && this.user.containsVariable(CharacterVariable.PLAYER_ID))
+            {
+               this.playerID = this.user.getVariable(CharacterVariable.PLAYER_ID).getIntValue() + "";
+            }
+            this.txtPlayerID.text = this.playerID;
+            if(this.avatarID == Connectr.instance.engine.scene.myChar.id)
+            {
+               this.initMoods();
+               this.editButton.visible = true;
+               this.sMood.visible = false;
+               this.sMood.text = "";
+               this.sStatus.text = "";
+               this.mcLike.buttonMode = false;
+               this.mcDislike.buttonMode = false;
+            }
+            else
+            {
+               this.mcLike.addEventListener(MouseEvent.CLICK,this.onLike);
+               this.mcLike.buttonMode = true;
+               this.mcDislike.addEventListener(MouseEvent.CLICK,this.onDislike);
+               this.mcDislike.buttonMode = true;
+               this.sMood.visible = true;
+               this.sMood.text = $(Connectr.instance.buddyModel.moods[this.state].label);
+            }
+            this.processLike(data);
+            if(data.banCount > 1)
+            {
+               this.mcBan.txt.text = data.banCount - 1;
+               this.mcBan.visible = true;
+               this.sStatus.text = $("profileStatus");
+            }
+            else
+            {
+               this.mcBan.visible = false;
+            }
+            if(data.emailRegistered == 1)
+            {
+               this.emailIcon.visible = true;
+               Connectr.instance.toolTipModel.addTip(this.emailIcon,$("Email Valid"));
+            }
+            else
+            {
+               this.emailIcon.visible = false;
+            }
+            this.infoTxt.text = "";
+            if(data.avatarCity)
+            {
+               this.infoTxt.text = data.avatarCity;
+            }
+            if(data.avatarAge)
+            {
+               this.avatarAge = data.avatarAge;
+               this.infoTxt.appendText(" / " + this.avatarAge);
+            }
+            this.infoTxt.mouseEnabled = false;
+            this.avatarName = data.avatarName;
+            if(this.avatarName.length > 15)
+            {
+               this.avatarName = this.avatarName.substr(0,12) + "...";
+            }
+            if(data.status)
+            {
+               this.cmnt = data.status;
+            }
+            else
+            {
+               this.cmnt = "";
+            }
+            this.buddystatics.totalBuddy = data.totalBuddies;
+            this.buddystatics.buddyRating = data.avarageRating;
+            imgRegExp = /<img[^>]+>/g;
+            imgTags = this.cmnt.match(imgRegExp);
+            if(imgTags == null)
+            {
+               imgTags = [];
+            }
+            if(data.banCount > 1)
+            {
+               this.sStatus.text = $("profileStatus");
+            }
+            else if(imgTags.length > 0)
+            {
+               this.sStatus.text = "";
+            }
+            else if(this.cmnt == "improperContent")
+            {
+               this.sStatus.text = $("improperContent");
+            }
+            else
+            {
+               this.sStatus.text = this.cmnt;
+            }
+            if(!hasEmbeddedAllGlyphs(this.avatarName,"Co Text Bold"))
+            {
+               this.avatarName += "????";
+            }
+            this.sName.text = this.avatarName;
+            this.sName.mouseEnabled = false;
+            this.txtAvatarID.addEventListener(MouseEvent.CLICK,this.copyAvatarID);
+            this.txtPlayerID.addEventListener(MouseEvent.CLICK,this.copyPlayerID);
+            char = Connectr.instance.engine.scene.getAvatarById(this.avatarID);
+            if(char == null)
+            {
+               trace("PROFILE_PANEL: avatar not in scene, skipping character preview");
+            }
+            else
+            {
+               if(this.charPreview)
+               {
+                  this.charPreview.terminate();
+               }
+               this.charPreview = Connectr.instance.clothModel.getNewCharPreview(this.charHolder,char,true);
+               this.charPreview.rotate(5);
+               if(!char.isMe)
+               {
+                  this.menu = new ProfileMenu(this.avatarID,data.isBuddy,data.isRequest,data.banCount);
+                  this.addChildAt(this.menu,0);
+                  this.menu.x = 0;
+               }
+            }
+            this.profileStickerContainer = new ProfileStickerContainer();
+            this.profileStickerContainer.init(data.cards,data.stickers);
+            this.addChildAt(this.profileStickerContainer,0);
+            profileStickerCardCount = data.stickers.length + data.cards.length;
+            profileStickerContainerX = 92;
+            if(profileStickerCardCount > 6)
+            {
+               profileStickerContainerX += int((profileStickerCardCount - 1) / 6) * 44;
+            }
+            this.btnSaveProfileSkin.visible = false;
+            if(this.profileSkinContainer != null)
+            {
                this.profileSkinContainer.dispose();
             }
-            this.btnProfileSkin.visible = true;
-            this.btnProfileSkin.addEventListener(MouseEvent.CLICK,this.onProfileSkin);
-            Connectr.instance.toolTipModel.addTip(this.btnProfileSkin,$("Profile Skin"));
-            this.btnSaveProfileSkin.addEventListener(MouseEvent.CLICK,this.onSaveProfileSkin);
-         }
-         if(Boolean(data.skin) && Boolean(data.skin.clip))
-         {
-            this.skinClip = data.skin.clip;
-         }
-         else
-         {
-            this.skinClip = null;
-         }
-         if(this.profileSkin == null)
-         {
-            this.profileSkin = new ProfileSkin();
-            this.profileSkin.mask = this.mcMask;
-            this.profileSkin.init(data.skin);
-            addChildAt(this.profileSkin,this.getChildIndex(this.background) + 1);
-         }
-         else
-         {
-            this.profileSkin.dispose();
-            this.profileSkin.init(data.skin);
-         }
-         hasSanalikaX = data.cards.filter(function(param1:Object, param2:int, param3:Array):Boolean
-         {
-            return param1.clip == "CARD_SANALIKAX";
-         }).length > 0;
-         this.sanalikaX.visible = hasSanalikaX;
-         this.profileBadgeContainer = new ProfileBadgeContainer();
-         this.profileBadgeContainer.init(data.badges);
-         this.addChildAt(this.profileBadgeContainer,0);
-         profileBadgeContainerY = this.background.height + 52;
-         if(data.badges.length > 5)
-         {
-            profileBadgeContainerY += int((data.badges.length - 1) / 5) * 44;
-         }
-         if(data.runWinTeam)
-         {
-            this.stxtTeamInfo.text = data.runWinTeam;
-         }
-         else
-         {
-            this.stxtTeamInfo.text = $("TeamNA");
-         }
-         if(data.flats.length > 0)
-         {
-            this.flatData = data.flats;
-            this.stxtFlatCount.text = printf($("Has %s place(s)"),data.flats.length);
-            this.btnFlat.addEventListener(MouseEvent.CLICK,this.flatClicked);
-         }
-         else
-         {
-            this.stxtFlatCount.text = $("Has no place");
-         }
-         if(this.menu)
-         {
-            TweenMax.to(this.menu,0.5,{
-               "delay":0.2,
-               "x":-55,
-               "ease":Back.easeOut
-            });
-         }
-         if(this.profileBadgeContainer)
-         {
-            TweenMax.to(this.profileBadgeContainer,0.5,{
-               "delay":0.8,
-               "y":profileBadgeContainerY,
-               "ease":Back.easeOut
-            });
-         }
-         if(this.profileStickerContainer)
-         {
-            TweenMax.to(this.profileStickerContainer,0.5,{
-               "delay":0.4,
-               "x":profileStickerContainerX,
-               "ease":Back.easeOut
-            });
-         }
-         this.btnImproper.visible = false;
-         this.btnImproperStatus.visible = false;
-         this.btnImproperCity.visible = false;
-         if(Boolean(Connectr.instance.avatarModel.permission.check(AvatarPermission.SECURITY)) && (char == null || !char.isMe))
-         {
-            Connectr.instance.toolTipModel.addTip(this.btnImproper,$("improperName"),TooltipAlign.ALIGN_RIGHT);
-            Connectr.instance.toolTipModel.addTip(this.btnImproperStatus,$("improperStatus"),TooltipAlign.ALIGN_RIGHT);
-            this.btnImproper.addEventListener(MouseEvent.CLICK,this.btnImproperClicked);
-            this.btnImproper.visible = true;
-            this.btnImproperStatus.addEventListener(MouseEvent.CLICK,this.btnImproperStatusClicked);
-            this.btnImproperStatus.visible = true;
-            if(data.avatarCity != "" && data.avatarCity != "improperCity")
+            if(char != null && char.isMe)
             {
-               this.btnImproperCity.addEventListener(MouseEvent.CLICK,this.btnImproperCityClicked);
-               this.btnImproperCity.visible = true;
-               Connectr.instance.toolTipModel.addTip(this.btnImproperCity,$("improperCity"),TooltipAlign.ALIGN_RIGHT);
+               if(this.profileSkinContainer == null)
+               {
+                  this.profileSkinContainer = new ProfileSkinContainer();
+                  this.profileSkinContainer.init();
+                  this.addChildAt(this.profileSkinContainer,0);
+               }
+               else
+               {
+                  this.profileSkinContainer.dispose();
+               }
+               this.btnProfileSkin.visible = true;
+               this.btnProfileSkin.addEventListener(MouseEvent.CLICK,this.onProfileSkin);
+               Connectr.instance.toolTipModel.addTip(this.btnProfileSkin,$("Profile Skin"));
+               this.btnSaveProfileSkin.addEventListener(MouseEvent.CLICK,this.onSaveProfileSkin);
             }
+            if(Boolean(data.skin) && Boolean(data.skin.clip))
+            {
+               this.skinClip = data.skin.clip;
+            }
+            else
+            {
+               this.skinClip = null;
+            }
+            if(this.profileSkin == null)
+            {
+               this.profileSkin = new ProfileSkin();
+               this.profileSkin.mask = this.mcMask;
+               this.profileSkin.init(data.skin);
+               addChildAt(this.profileSkin,this.getChildIndex(this.background) + 1);
+            }
+            else
+            {
+               this.profileSkin.dispose();
+               this.profileSkin.init(data.skin);
+            }
+            hasSanalikaX = data.cards.filter(function(param1:Object, param2:int, param3:Array):Boolean
+            {
+               return param1.clip == "CARD_SANALIKAX";
+            }).length > 0;
+            this.sanalikaX.visible = hasSanalikaX;
+            this.profileBadgeContainer = new ProfileBadgeContainer();
+            this.profileBadgeContainer.init(data.badges);
+            this.addChildAt(this.profileBadgeContainer,0);
+            profileBadgeContainerY = this.background.height + 52;
+            if(data.badges.length > 5)
+            {
+               profileBadgeContainerY += int((data.badges.length - 1) / 5) * 44;
+            }
+            if(data.runWinTeam)
+            {
+               this.stxtTeamInfo.text = data.runWinTeam;
+            }
+            else
+            {
+               this.stxtTeamInfo.text = $("TeamNA");
+            }
+            if(data.flats.length > 0)
+            {
+               this.flatData = data.flats;
+               this.stxtFlatCount.text = printf($("Has %s place(s)"),data.flats.length);
+               this.btnFlat.addEventListener(MouseEvent.CLICK,this.flatClicked);
+            }
+            else
+            {
+               this.stxtFlatCount.text = $("Has no place");
+            }
+            if(this.menu)
+            {
+               TweenMax.to(this.menu,0.5,{
+                  "delay":0.2,
+                  "x":-55,
+                  "ease":Back.easeOut
+               });
+            }
+            if(this.profileBadgeContainer)
+            {
+               TweenMax.to(this.profileBadgeContainer,0.5,{
+                  "delay":0.8,
+                  "y":profileBadgeContainerY,
+                  "ease":Back.easeOut
+               });
+            }
+            if(this.profileStickerContainer)
+            {
+               TweenMax.to(this.profileStickerContainer,0.5,{
+                  "delay":0.4,
+                  "x":profileStickerContainerX,
+                  "ease":Back.easeOut
+               });
+            }
+            this.btnImproper.visible = false;
+            this.btnImproperStatus.visible = false;
+            this.btnImproperCity.visible = false;
+            if(Boolean(Connectr.instance.avatarModel.permission.check(AvatarPermission.SECURITY)) && (char == null || !char.isMe))
+            {
+               Connectr.instance.toolTipModel.addTip(this.btnImproper,$("improperName"),TooltipAlign.ALIGN_RIGHT);
+               Connectr.instance.toolTipModel.addTip(this.btnImproperStatus,$("improperStatus"),TooltipAlign.ALIGN_RIGHT);
+               this.btnImproper.addEventListener(MouseEvent.CLICK,this.btnImproperClicked);
+               this.btnImproper.visible = true;
+               this.btnImproperStatus.addEventListener(MouseEvent.CLICK,this.btnImproperStatusClicked);
+               this.btnImproperStatus.visible = true;
+               if(data.avatarCity != "" && data.avatarCity != "improperCity")
+               {
+                  this.btnImproperCity.addEventListener(MouseEvent.CLICK,this.btnImproperCityClicked);
+                  this.btnImproperCity.visible = true;
+                  Connectr.instance.toolTipModel.addTip(this.btnImproperCity,$("improperCity"),TooltipAlign.ALIGN_RIGHT);
+               }
+            }
+            this.applyDefaultSkinStyle();
+            show();
          }
-         this.applyDefaultSkinStyle();
-         show();
+         catch(e:Error)
+         {
+            trace("[PROFILE_PANEL_CRASH] " + e + " types=" + typeof(data.avatarName) + "/" + typeof(data.status) + "/" + typeof(data.cards) + "/" + typeof(data.skin));
+            close();
+         }
       }
       
       public function applyDefaultSkinStyle() : void
