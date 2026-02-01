@@ -66,6 +66,27 @@ public final class RequestValidator {
         schemas.put("removeavatarrestriction", RequestSchema.builder().build());
         schemas.put("sceneitems", RequestSchema.builder().build());
         schemas.put("savesceneitems", RequestSchema.builder().require("items", FieldType.SFS_ARRAY).build());
+        schemas.put("profile", RequestSchema.builder().require("avatarID", FieldType.UTF_STRING).build());
+        schemas.put("profilelike", RequestSchema.builder()
+                .require("avatarID", FieldType.UTF_STRING)
+                .require("avatarLike", FieldType.INT)
+                .build());
+        schemas.put("profileimproper", RequestSchema.builder()
+                .require("avatarID", FieldType.UTF_STRING)
+                .require("action", FieldType.UTF_STRING)
+                .build());
+        schemas.put("profileskinlist", RequestSchema.builder()
+                .require("search", FieldType.UTF_STRING)
+                .require("page", FieldType.INT)
+                .require("sort", FieldType.UTF_STRING)
+                .build());
+        schemas.put("useprofileskinwithclip", RequestSchema.builder()
+                .require("clip", FieldType.UTF_STRING)
+                .build());
+        schemas.put("kickavatarfromroom", RequestSchema.builder()
+                .require("avatarID", FieldType.UTF_STRING)
+                .require("duration", FieldType.DOUBLE)
+                .build());
         return Collections.unmodifiableMap(schemas);
     }
 
