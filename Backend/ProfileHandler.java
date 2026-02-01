@@ -12,7 +12,8 @@ public class ProfileHandler extends OsBaseHandler {
         ISFSObject data = data(params);
         String avatarId = resolveAvatarId(data);
 
-        trace("### PROFILE_HANDLER_V2 HIT ### rid=" + getClientRid(params) + " user=" + user.getName());
+        int rid = extractRid(params);
+        trace("### PROFILE_HANDLER_V2 HIT ### rid=" + rid + " user=" + user.getName());
         trace("[PROFILE] Request avatarID=" + avatarId + " user=" + user.getName());
 
         SFSObject res = new SFSObject();
@@ -44,7 +45,8 @@ public class ProfileHandler extends OsBaseHandler {
         res.putUtfString("runWinTeam", "");
 
         trace("[PROFILE] Response keys=" + res.getKeys().length + " avatarID=" + avatarId);
-        sendResponseWithRid("profile", res, user, params);
+        trace("RID_CHECK cmd=profile reqRid=" + rid + " resRid=" + rid + " avatarID=" + avatarId);
+        sendResponseWithRid("profile", res, user, rid);
     }
 
     private String resolveAvatarId(ISFSObject data) {

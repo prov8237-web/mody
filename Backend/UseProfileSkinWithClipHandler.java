@@ -10,10 +10,12 @@ public class UseProfileSkinWithClipHandler extends OsBaseHandler {
     public void handleClientRequest(User user, ISFSObject params) {
         ISFSObject data = data(params);
         String clip = readField(data, "clip", "0");
+        int rid = extractRid(params);
 
         trace("[USE_PROFILE_SKIN] clip=" + clip + " user=" + user.getName());
         SFSObject res = new SFSObject();
-        sendResponseWithRid("useprofileskinwithclip", res, user, params);
+        trace("RID_CHECK cmd=useprofileskinwithclip reqRid=" + rid + " resRid=" + rid + " avatarID=unknown");
+        sendResponseWithRid("useprofileskinwithclip", res, user, rid);
     }
 
     private String readField(ISFSObject data, String key, String fallback) {

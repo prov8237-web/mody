@@ -11,10 +11,12 @@ public class ProfileImproperHandler extends OsBaseHandler {
         ISFSObject data = data(params);
         String avatarId = readField(data, "avatarID", "Unknown");
         String action = readField(data, "action", "unknown");
+        int rid = extractRid(params);
 
         trace("[PROFILEIMPROPER] avatarID=" + avatarId + " action=" + action + " user=" + user.getName());
         SFSObject res = new SFSObject();
-        sendResponseWithRid("profileimproper", res, user, params);
+        trace("RID_CHECK cmd=profileimproper reqRid=" + rid + " resRid=" + rid + " avatarID=" + avatarId);
+        sendResponseWithRid("profileimproper", res, user, rid);
     }
 
     private String readField(ISFSObject data, String key, String fallback) {
