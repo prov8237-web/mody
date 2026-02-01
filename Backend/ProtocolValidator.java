@@ -244,7 +244,7 @@ public final class ProtocolValidator {
                 .require("pageSelected", FieldType.INT)
                 .build());
         schemas.put("useprofileskinwithclip", ResponseSchema.builder().build());
-        schemas.put("kickavatarfromroom", ResponseSchema.builder().build());
+        schemas.put("kickAvatarFromRoom", ResponseSchema.builder().build());
 
         return Collections.unmodifiableMap(schemas);
     }

@@ -13,7 +13,7 @@ public class ProfileHandler extends OsBaseHandler {
         String avatarId = resolveAvatarId(data);
 
         int rid = extractRid(params);
-        trace("### PROFILE_HANDLER_V2 HIT ### rid=" + rid + " user=" + user.getName());
+        trace("### PROFILE_HANDLER_V2 HIT ### handler=ProfileHandler rid=" + rid + " user=" + user.getName());
         trace("[PROFILE] Request avatarID=" + avatarId + " user=" + user.getName());
 
         SFSObject res = new SFSObject();
@@ -31,20 +31,20 @@ public class ProfileHandler extends OsBaseHandler {
         res.putInt("mood", 0);
         res.putInt("likeCount", 0);
         res.putInt("dislikeCount", 0);
-        res.putUtfString("status", "");
+        res.putUtfString("status", "<img />");
         res.putUtfString("avatarCity", "");
         res.putUtfString("avatarAge", "");
         res.putInt("emailRegistered", 0);
         res.putInt("nextRequest", 0);
         res.putInt("duration", 0);
         SFSObject skin = new SFSObject();
-        skin.putUtfString("clip", "0");
-        skin.putSFSObject("property", new SFSObject());
-        skin.putUtfString("roles", "");
         res.putSFSObject("skin", skin);
         res.putUtfString("runWinTeam", "");
 
         trace("[PROFILE] Response keys=" + res.getKeys().length + " avatarID=" + avatarId);
+        trace("[PROFILE] P0_GUARD statusHasImg=" + "<img />".contains("<img") + " cards=" + res.getSFSArray("cards").size()
+            + " stickers=" + res.getSFSArray("stickers").size() + " badges=" + res.getSFSArray("badges").size()
+            + " flats=" + res.getSFSArray("flats").size() + " skinClip=" + (skin.containsKey("clip") ? skin.getUtfString("clip") : "null"));
         trace("RID_CHECK cmd=profile reqRid=" + rid + " resRid=" + rid + " avatarID=" + avatarId);
         sendResponseWithRid("profile", res, user, rid);
     }

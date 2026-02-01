@@ -83,7 +83,7 @@ public final class RequestValidator {
         schemas.put("useprofileskinwithclip", RequestSchema.builder()
                 .require("clip", FieldType.UTF_STRING)
                 .build());
-        schemas.put("kickavatarfromroom", RequestSchema.builder()
+        schemas.put("kickAvatarFromRoom", RequestSchema.builder()
                 .require("avatarID", FieldType.UTF_STRING)
                 .require("duration", FieldType.DOUBLE)
                 .build());

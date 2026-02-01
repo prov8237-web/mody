@@ -13,10 +13,10 @@ public class KickAvatarFromRoomHandler extends OsBaseHandler {
         double duration = readDouble(data, "duration", 0.0);
         int rid = extractRid(params);
 
-        trace("[KICK_AVATAR] avatarID=" + avatarId + " duration=" + duration + " user=" + user.getName());
+        trace("[KICK_AVATAR] handler=KickAvatarFromRoomHandler avatarID=" + avatarId + " duration=" + duration + " user=" + user.getName());
         SFSObject res = new SFSObject();
-        trace("RID_CHECK cmd=kickavatarfromroom reqRid=" + rid + " resRid=" + rid + " avatarID=" + avatarId);
-        sendResponseWithRid("kickavatarfromroom", res, user, rid);
+        trace("RID_CHECK cmd=kickAvatarFromRoom reqRid=" + rid + " resRid=" + rid + " avatarID=" + avatarId);
+        sendResponseWithRid("kickAvatarFromRoom", res, user, rid);
     }
 
     private String readField(ISFSObject data, String key, String fallback) {

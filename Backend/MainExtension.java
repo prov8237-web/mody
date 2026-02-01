@@ -46,7 +46,7 @@ public class MainExtension extends SFSExtension {
         registerHandler("profileimproper", ProfileImproperHandler.class);
         registerHandler("profileskinlist", ProfileSkinListHandler.class);
         registerHandler("useprofileskinwithclip", UseProfileSkinWithClipHandler.class);
-        registerHandler("kickavatarfromroom", KickAvatarFromRoomHandler.class);
+        registerHandler("kickAvatarFromRoom", KickAvatarFromRoomHandler.class);
         
         // Ping/Pong - official server responds with "pong"
         registerHandler("ping", PingHandler.class);
