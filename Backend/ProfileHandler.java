@@ -40,7 +40,7 @@ public class ProfileHandler extends OsBaseHandler {
         res.putInt("nextRequest", 0);
         res.putInt("duration", 0);
         SFSObject skin = new SFSObject();
-        skin.putNull("clip");
+        skin.putUtfString("clip", "");
         SFSObject skinProperty = new SFSObject();
         skinProperty.putUtfString("bgColor", "FEFFF2");
         skinProperty.putUtfString("alpha", "1");
@@ -54,7 +54,7 @@ public class ProfileHandler extends OsBaseHandler {
         trace("[PROFILE] Response keys=" + keyCount(res) + " avatarID=" + avatarId);
         trace("[PROFILE] PayloadTypes=" + payloadTypes(res));
         trace("RID_CHECK cmd=profile reqRid=" + rid + " resRid=" + rid + " avatarID=" + avatarId);
-        sendResponseWithRid("profile", res, user, rid);
+        reply(user, "profile", res);
     }
 
     private String resolveAvatarId(ISFSObject data) {
