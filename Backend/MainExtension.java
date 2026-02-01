@@ -39,6 +39,14 @@ public class MainExtension extends SFSExtension {
         registerHandler("usechatballoon", UseChatBalloonHandler.class);
         registerHandler("sceneitems", SceneItemsHandler.class);
         registerHandler("savesceneitems", SaveSceneItemsHandler.class);
+
+        // Profile handlers
+        registerHandler("profile", ProfileHandler.class);
+        registerHandler("profilelike", ProfileLikeHandler.class);
+        registerHandler("profileimproper", ProfileImproperHandler.class);
+        registerHandler("profileskinlist", ProfileSkinListHandler.class);
+        registerHandler("useprofileskinwithclip", UseProfileSkinWithClipHandler.class);
+        registerHandler("kickavatarfromroom", KickAvatarFromRoomHandler.class);
         
         // Ping/Pong - official server responds with "pong"
         registerHandler("ping", PingHandler.class);

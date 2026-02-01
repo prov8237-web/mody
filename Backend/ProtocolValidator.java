@@ -213,6 +213,38 @@ public final class ProtocolValidator {
                 .require("nextRequest", FieldType.INT)
                 .build());
         schemas.put("orderlist", ResponseSchema.builder().require("orders", FieldType.SFS_ARRAY).build());
+        schemas.put("profile", ResponseSchema.builder()
+                .require("avatarName", FieldType.UTF_STRING)
+                .require("avarageRating", FieldType.UTF_STRING)
+                .require("totalBuddies", FieldType.INT)
+                .require("isBuddy", FieldType.BOOL)
+                .require("isRequest", FieldType.BOOL)
+                .require("banCount", FieldType.INT)
+                .require("cards", FieldType.SFS_ARRAY)
+                .require("stickers", FieldType.SFS_ARRAY)
+                .require("badges", FieldType.SFS_ARRAY)
+                .require("flats", FieldType.SFS_ARRAY)
+                .require("mood", FieldType.INT)
+                .require("likeCount", FieldType.INT)
+                .require("dislikeCount", FieldType.INT)
+                .require("status", FieldType.UTF_STRING)
+                .require("avatarCity", FieldType.UTF_STRING)
+                .require("avatarAge", FieldType.UTF_STRING)
+                .require("emailRegistered", FieldType.INT)
+                .require("skin", FieldType.SFS_OBJECT)
+                .require("runWinTeam", FieldType.UTF_STRING)
+                .build());
+        schemas.put("profilelike", ResponseSchema.builder()
+                .require("likeCount", FieldType.INT)
+                .require("dislikeCount", FieldType.INT)
+                .build());
+        schemas.put("profileimproper", ResponseSchema.builder().build());
+        schemas.put("profileskinlist", ResponseSchema.builder()
+                .require("items", FieldType.SFS_OBJECT)
+                .require("pageSelected", FieldType.INT)
+                .build());
+        schemas.put("useprofileskinwithclip", ResponseSchema.builder().build());
+        schemas.put("kickavatarfromroom", ResponseSchema.builder().build());
 
         return Collections.unmodifiableMap(schemas);
     }

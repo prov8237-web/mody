@@ -59,6 +59,64 @@ public abstract class OsBaseHandler extends BaseClientRequestHandler {
         }
     }
 
+    protected int extractRid(ISFSObject params) {
+        if (params == null) {
+            return -1;
+        }
+        if (params.containsKey("rid")) {
+            try {
+                return params.getInt("rid");
+            } catch (Exception ignored) {
+            }
+        }
+        if (params.containsKey("data")) {
+            try {
+                ISFSObject data = params.getSFSObject("data");
+                if (data != null && data.containsKey("rid")) {
+                    return data.getInt("rid");
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        if (params.containsKey("clientRid")) {
+            try {
+                return params.getInt("clientRid");
+            } catch (Exception ignored) {
+            }
+        }
+        if (params.containsKey("data")) {
+            try {
+                ISFSObject data = params.getSFSObject("data");
+                if (data != null && data.containsKey("clientRid")) {
+                    return data.getInt("clientRid");
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return -1;
+    }
+
+    protected void sendResponseWithRid(String cmd, ISFSObject res, User user, int rid) {
+        if (res == null) {
+            res = new SFSObject();
+        }
+        if (rid > 0) {
+            res.putInt("rid", rid);
+        }
+        res.putUtfString("__cmd", cmd);
+        ProtocolValidator.validateResponse(cmd, res, this);
+        send(cmd, res, user);
+        trace("[RESP_WITH_RID] cmd=" + cmd + " type=RESPONSE clientRid=" + rid + " keys=" + res.getKeys());
+        try {
+            MainExtension mainExt = (MainExtension) getParentExtension();
+            if (mainExt != null) {
+                mainExt.markResponseSent(cmd, user);
+            }
+        } catch (Exception e) {
+            // Silent
+        }
+    }
+
     protected ISFSObject data(ISFSObject params) {
         return HandlerUtils.dataOrSelf(params);
     }

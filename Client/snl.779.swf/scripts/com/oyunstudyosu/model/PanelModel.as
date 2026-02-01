@@ -231,6 +231,7 @@ package com.oyunstudyosu.model
          _loc3_.data = param1;
          _loc3_.context = Sanalika.instance.domainModel.subContext;
          _loc3_.assetId = Sanalika.instance.moduleModel.getPath(param1.name,"ModuleType.PANEL");
+         trace("### PROFILE MODULE LOAD ### panel=" + param1.name + " moduleSwf=" + _loc3_.name + " url=" + _loc3_.assetId);
          _loc3_.loadedFunction = onLoaded;
          _loc3_.errorFunction = onError;
          _loc3_.type = "ModuleType.PANEL";
