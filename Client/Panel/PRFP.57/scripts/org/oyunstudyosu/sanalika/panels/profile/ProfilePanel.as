@@ -474,6 +474,7 @@ package org.oyunstudyosu.sanalika.panels.profile
          }
          if(data.errorCode)
          {
+            trace("[PROFILE_PANEL_ERROR] errorCode=" + data.errorCode);
             close();
             return;
          }
