@@ -215,7 +215,7 @@ public final class ProtocolValidator {
         schemas.put("orderlist", ResponseSchema.builder().require("orders", FieldType.SFS_ARRAY).build());
         schemas.put("profile", ResponseSchema.builder()
                 .require("avatarName", FieldType.UTF_STRING)
-                .require("avarageRating", FieldType.UTF_STRING)
+                .require("avarageRating", FieldType.DOUBLE)
                 .require("totalBuddies", FieldType.INT)
                 .require("isBuddy", FieldType.BOOL)
                 .require("isRequest", FieldType.BOOL)
@@ -244,7 +244,7 @@ public final class ProtocolValidator {
                 .require("pageSelected", FieldType.INT)
                 .build());
         schemas.put("useprofileskinwithclip", ResponseSchema.builder().build());
-        schemas.put("kickavatarfromroom", ResponseSchema.builder().build());
+        schemas.put("kickAvatarFromRoom", ResponseSchema.builder().build());
 
         return Collections.unmodifiableMap(schemas);
     }
