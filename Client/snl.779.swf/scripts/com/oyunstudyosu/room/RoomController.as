@@ -2,6 +2,7 @@ package com.oyunstudyosu.room
 {
    import com.oyunstudyosu.alert.AlertEvent;
    import com.oyunstudyosu.alert.AlertVo;
+   import com.oyunstudyosu.avatar.AvatarModel;
    import com.oyunstudyosu.engine.IEngine;
    import com.oyunstudyosu.engine.IsoScene;
    import com.oyunstudyosu.engine.character.Character;
@@ -423,7 +424,7 @@ package com.oyunstudyosu.room
          var _loc3_:UserVariable = sfs.mySelf.getVariable("clothes");
          Sanalika.instance.avatarModel.gender = sfs.mySelf.getVariable("gender").getStringValue();
          var _loc2_:Array = JSON.parse(_loc3_.getStringValue()) as Array;
-         Sanalika.instance.avatarModel.clothesOn = _loc2_;
+         Sanalika.instance.avatarModel.clothesOn = AvatarModel.extractClothesKeys(_loc2_);
          Sanalika.instance.avatarModel.position = sfs.mySelf.getVariable("position").getStringValue();
          Sanalika.instance.avatarModel.direction = sfs.mySelf.getVariable("direction").getIntValue();
          engine.changeScene();
@@ -593,7 +594,7 @@ package com.oyunstudyosu.room
                return false;
             }
             _loc8_ = param1.getVariable("clothes");
-            _loc5_ = JSON.parse(_loc8_.getStringValue()) as Array;
+            _loc5_ = AvatarModel.extractClothesKeys(JSON.parse(_loc8_.getStringValue()) as Array);
             _loc12_ = String(param1.getVariable("gender").getStringValue());
             (_loc6_ = new Character()).isSpectator = currentRoom.spectatorList.indexOf(param1) != -1;
             _loc6_.platform = param1.getVariable("platform").getStringValue();

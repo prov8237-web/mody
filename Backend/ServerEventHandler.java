@@ -71,6 +71,10 @@ public class ServerEventHandler extends BaseServerEventHandler {
         roomVars.add(new SFSRoomVariable("isGameEnded", false));
         getApi().setRoomVariables(null, room, roomVars, false, false, false);
         trace("[SERVER_EVENT] USER_JOIN_ROOM room vars for " + room.getName());
+
+        for (String line : RenderGateAudit.audit(user, userState, "ROOM_JOIN")) {
+            trace(line);
+        }
     }
 
     private void onUserLeaveRoom(ISFSEvent event, MainExtension ext) {

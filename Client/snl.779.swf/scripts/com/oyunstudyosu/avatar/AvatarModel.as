@@ -673,6 +673,28 @@ package com.oyunstudyosu.avatar
          }
          _clothesOn = param1;
       }
+
+      public static function extractClothesKeys(param1:Array) : Array
+      {
+         var _loc2_:* = null;
+         var _loc3_:Array = [];
+         if(param1 == null)
+         {
+            return _loc3_;
+         }
+         for each(_loc2_ in param1)
+         {
+            if(_loc2_ is String)
+            {
+               _loc3_.push(_loc2_);
+            }
+            else if(_loc2_ != null && _loc2_.hasOwnProperty("clip"))
+            {
+               _loc3_.push(String(_loc2_.clip));
+            }
+         }
+         return _loc3_;
+      }
       
       public function get allClothes() : String
       {

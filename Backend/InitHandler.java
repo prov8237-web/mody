@@ -111,9 +111,22 @@ public class InitHandler extends OsBaseHandler {
             System.out.println("★ STEP 8: Built clothes, count = " + savedItemsArray.size());
             trace("[INIT] Built " + savedItemsArray.size() + " default clothing items");
         }
-        
+
+        List<String> clothesErrors = new ArrayList<>();
+        if (!validateClothesItems(savedItemsArray, clothesErrors)) {
+            trace("[INIT] ⚠️ Invalid clothes payload detected: " + String.join("; ", clothesErrors));
+            savedItemsArray = buildDefaultClothesItems(savedGender);
+            clothesJson = savedItemsArray.toJson();
+            trace("[INIT] Rebuilt clothes payload with defaults. Count=" + savedItemsArray.size());
+        }
+
         state.setClothesJson(clothesJson);
         state.setClothesItems(savedItemsArray);
+
+        SFSArray clothesKeysArray = buildClothesKeysArray(savedItemsArray);
+        String clothesKeysJson = clothesKeysArray.toJson();
+        int clothesKeysLen = clothesKeysArray.size();
+        String firstClothesKey = clothesKeysLen > 0 ? clothesKeysArray.getUtfString(0) : "-";
         
         // ═══════════════════════════════════════════════════════════
         // DEBUG: Print clothes JSON for analysis
@@ -135,10 +148,11 @@ public class InitHandler extends OsBaseHandler {
         userVars.add(new SFSUserVariable("speed", 1.0));
         userVars.add(new SFSUserVariable("smiley", ""));
         userVars.add(new SFSUserVariable("avatarSize", 1.0));
-        userVars.add(new SFSUserVariable("clothes", clothesJson));
+        userVars.add(new SFSUserVariable("clothes", clothesKeysJson));
         userVars.add(new SFSUserVariable("optimizedAssetKey", state.getOptimizedAssetKey()));
         getApi().setUserVariables(user, userVars);
         trace("[INIT] Set initial user variables");
+        trace("[INIT] clothes userVar keys len=" + clothesKeysLen + " firstKey=" + firstClothesKey);
         
         // Set roles variable separately
         List<UserVariable> rolesVar = new ArrayList<>();
@@ -171,6 +185,10 @@ public class InitHandler extends OsBaseHandler {
         List<UserVariable> speedVars = new ArrayList<>();
         speedVars.add(new SFSUserVariable("speed", 1.0));
         getApi().setUserVariables(user, speedVars);
+
+        for (String line : RenderGateAudit.audit(user, state, "INIT")) {
+            trace(line);
+        }
         
         // ═══════════════════════════════════════════════════════════
         // STEP 6: Send questlistroom (matching official)
@@ -287,8 +305,8 @@ public class InitHandler extends OsBaseHandler {
         SFSObject clothesObjResponse = new SFSObject();
         clothesObjResponse.putUtfString("type", "CLOTH");
         
-        ISFSArray freshItems = buildDefaultClothesItems(savedGender);
-        clothesObjResponse.putSFSArray("items", freshItems);
+        ISFSArray renderItems = state.getClothesItems();
+        clothesObjResponse.putSFSArray("items", renderItems);
         res.putSFSObject("clothes", clothesObjResponse);
         
         System.out.println("★★★ INIT RESPONSE CLOTHES ★★★");
@@ -330,7 +348,8 @@ public class InitHandler extends OsBaseHandler {
         try {
             com.smartfoxserver.v2.entities.Room targetRoom = getParentExtension().getParentZone().getRoomByName("street01");
             if (targetRoom != null) {
-                ensureMandatoryRoomVars(targetRoom);
+                InMemoryStore.RoomState roomState = store.getOrCreateRoom(targetRoom);
+                ensureMandatoryRoomVars(targetRoom, roomState, "INIT");
                 if (user.getLastJoinedRoom() == null) {
                     getApi().joinRoom(user, targetRoom);
                     trace("[INIT] Joined room: street01");
@@ -405,27 +424,81 @@ public class InitHandler extends OsBaseHandler {
         return item;
     }
 
-    private void ensureMandatoryRoomVars(com.smartfoxserver.v2.entities.Room room) {
-        List<RoomVariable> vars = new ArrayList<>();
+    private boolean validateClothesItems(ISFSArray items, List<String> errors) {
+        if (items == null || items.size() == 0) {
+            errors.add("items_empty");
+            return false;
+        }
+        boolean ok = true;
+        for (int i = 0; i < items.size(); i++) {
+            ISFSObject item = items.getSFSObject(i);
+            if (item == null) {
+                errors.add("item_" + i + "_null");
+                ok = false;
+                continue;
+            }
+            ok &= validateClothesField(item, i, "clip", "String", errors);
+            ok &= validateClothesField(item, i, "subType", "String", errors);
+            ok &= validateClothesField(item, i, "productID", "Int", errors);
+            ok &= validateClothesField(item, i, "color", "Int", errors);
+            ok &= validateClothesField(item, i, "quantity", "Int", errors);
+            ok &= validateClothesField(item, i, "roles", "String", errors);
+            ok &= validateClothesField(item, i, "source", "String", errors);
+            ok &= validateClothesField(item, i, "expire", "Int", errors);
+            ok &= validateClothesField(item, i, "transferrable", "Bool", errors);
+            ok &= validateClothesField(item, i, "id", "Int", errors);
+            ok &= validateClothesField(item, i, "lifeTime", "Int", errors);
+            ok &= validateClothesField(item, i, "timeLeft", "Int", errors);
+            ok &= validateClothesField(item, i, "createdAt", "String", errors);
+        }
+        return ok;
+    }
 
-        if (!room.containsVariable("roomKey")) {
-            vars.add(new SFSRoomVariable("roomKey", room.getName()));
+    private boolean validateClothesField(ISFSObject item, int index, String key, String expectedType, List<String> errors) {
+        if (!item.containsKey(key)) {
+            errors.add("item_" + index + "_missing_" + key);
+            return false;
         }
-        if (!room.containsVariable("width")) {
-            vars.add(new SFSRoomVariable("width", MapBuilder.ROOM_WIDTH));
+        try {
+            switch (expectedType) {
+                case "String":
+                    item.getUtfString(key);
+                    break;
+                case "Int":
+                    item.getInt(key);
+                    break;
+                case "Bool":
+                    item.getBool(key);
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            errors.add("item_" + index + "_wrongType_" + key + "_expected_" + expectedType);
+            return false;
         }
-        if (!room.containsVariable("height")) {
-            vars.add(new SFSRoomVariable("height", MapBuilder.ROOM_HEIGHT));
-        }
-        if (!room.containsVariable("type")) {
-            vars.add(new SFSRoomVariable("type", "OUTDOOR"));
-        }
-        if (!room.containsVariable("roomTitle")) {
-            vars.add(new SFSRoomVariable("roomTitle", room.getName()));
-        }
+        return true;
+    }
 
-        if (!vars.isEmpty()) {
-            getApi().setRoomVariables(null, room, vars);
+    private SFSArray buildClothesKeysArray(ISFSArray items) {
+        SFSArray keys = new SFSArray();
+        if (items == null) {
+            return keys;
         }
+        for (int i = 0; i < items.size(); i++) {
+            ISFSObject item = items.getSFSObject(i);
+            if (item == null || !item.containsKey("clip")) {
+                continue;
+            }
+            try {
+                String clip = item.getUtfString("clip");
+                if (clip != null && !clip.isEmpty()) {
+                    keys.addUtfString(clip);
+                }
+            } catch (Exception e) {
+                // ignore invalid clip entries
+            }
+        }
+        return keys;
     }
 }

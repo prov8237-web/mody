@@ -1,0 +1,109 @@
+{
+  "userVariables": {
+    "position": {
+      "type": "string",
+      "example": "x,y",
+      "notes": "Required for remote avatar spawn.",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "direction": {
+      "type": "int",
+      "notes": "Optional; defaults to 1 if missing.",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "gender": {
+      "type": "string",
+      "notes": "Required for Character.init().",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "clothes": {
+      "type": "json-string-array",
+      "notes": "Required; parsed into clothes array for Character.init().",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "avatarName": {
+      "type": "string",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "speed": {
+      "type": "number",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "roles": {
+      "type": "string",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "platform": {
+      "type": "string",
+      "notes": "If 'mobile', avatar is hidden and MobileModel is used.",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "status": {
+      "type": "string",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "smiley": {
+      "type": "string",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "avatarSize": {
+      "type": "number",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "hand": {
+      "type": "string",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "target": {
+      "type": "string",
+      "example": "x,y",
+      "notes": "If present and flagged, triggers walk to target.",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "poolVars": {
+      "type": "string",
+      "notes": "Used for pool item removal on user exit.",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    }
+  },
+  "roomVariables": {
+    "isInteractiveRoom": {
+      "type": "boolean",
+      "notes": "If false, users are ignored for enter/exit handling.",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "doors": {
+      "type": "json-string",
+      "notes": "Door definitions for RoomModel.doorModel.",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "bots": {
+      "type": "json-string",
+      "notes": "Bot list; triggers scene reload when changed.",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as"]
+    },
+    "extensions": {
+      "type": "json-array",
+      "notes": "Room extension definitions loaded before scene processing.",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/engine/scene/components/SceneProcessDataComponent.as"]
+    }
+  },
+  "localAvatarModel": {
+    "position": {
+      "type": "string",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/avatar/AvatarModel.as", "Client/snl.779.swf/scripts/com/oyunstudyosu/engine/scene/components/SceneProcessDataComponent.as"]
+    },
+    "direction": {
+      "type": "int",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/avatar/AvatarModel.as", "Client/snl.779.swf/scripts/com/oyunstudyosu/engine/scene/components/SceneProcessDataComponent.as"]
+    },
+    "clothesOn": {
+      "type": "array",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/avatar/AvatarModel.as", "Client/snl.779.swf/scripts/com/oyunstudyosu/engine/scene/components/SceneProcessDataComponent.as"]
+    },
+    "avatarSize": {
+      "type": "number",
+      "references": ["Client/snl.779.swf/scripts/com/oyunstudyosu/avatar/AvatarModel.as", "Client/snl.779.swf/scripts/com/oyunstudyosu/engine/scene/components/SceneProcessDataComponent.as"]
+    }
+  }
+}

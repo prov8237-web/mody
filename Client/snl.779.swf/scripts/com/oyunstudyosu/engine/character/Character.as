@@ -613,6 +613,10 @@ package com.oyunstudyosu.engine.character
          var _loc4_:Array = [];
          for each(var _loc3_ in param1)
          {
+            if(!(_loc3_ is String) && _loc3_ != null && _loc3_.hasOwnProperty("clip"))
+            {
+               _loc3_ = String(_loc3_.clip);
+            }
             _loc2_ = Sanalika.instance.itemModel.getCloth(sex + "_" + _loc3_);
             if(_loc2_ == null || _loc4_.indexOf(_loc2_.placeBit) != -1)
             {

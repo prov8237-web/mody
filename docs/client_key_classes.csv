@@ -1,0 +1,11 @@
+area,class,file,key_methods,notes
+engine/scene,SceneProcessDataComponent,Client/snl.779.swf/scripts/com/oyunstudyosu/engine/scene/components/SceneProcessDataComponent.as,"load(), processSceneData(), onLoaded()","Loads room SWF and furniture assets; spawns local avatar if SceneCharacterComponent exists and RoomModel.disableAddChar is false."
+engine/scene,SceneCharacterComponent,Client/snl.779.swf/scripts/com/oyunstudyosu/engine/scene/components/SceneCharacterComponent.as,"addChar(), removeWithAvatarId(), getAvatarById()","Holds registry of all characters in the scene and tracks myChar."
+engine/character,Character,Client/snl.779.swf/scripts/com/oyunstudyosu/engine/character/Character.as,"init(id,scene,type,sex,clothes), reLocate(x,y,dir), walk(x,y,...), setAction(), setSmiley(), useHandItem()","Core avatar render entity; creates display list, applies clothing, handles movement and status updates."
+engine, IsoScene,Client/snl.779.swf/scripts/com/oyunstudyosu/engine/IsoScene.as,"getAvatarById(), get myChar, addComponent(SceneCharacterComponent)","Scene container used by Character init and for retrieving avatars by id."
+room,RoomController,Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomController.as,"onUserEnterRoom(), addChar(user), onUserExitRoom()","Spawns/removes remote avatars based on SmartFox events and user variables."
+room,RoomModel,Client/snl.779.swf/scripts/com/oyunstudyosu/room/RoomModel.as,"disableAddChar flag, getMap()","Holds room state used by SceneProcessDataComponent; disables local avatar creation when set."
+avatar,AvatarModel,Client/snl.779.swf/scripts/com/oyunstudyosu/avatar/AvatarModel.as,"position, direction, clothesOn, avatarSize","Local avatar state used when spawning player character."
+avatar,AvatarController,Client/snl.779.swf/scripts/com/oyunstudyosu/avatar/AvatarController.as,"listenUserVariable(...), onPositionUpdate(), onDirectionUpdate()","Reacts to SmartFox user variable updates (movement, clothes, status)."
+service,ServiceModel,Client/snl.779.swf/scripts/com/oyunstudyosu/service/ServiceModel.as,"activate(), listenUserVariable(), listenRoomVariable()","Registers SFS event handlers for user/room variables and extension responses."
+room swf,RoomLayer,Client/Rooms/st01.1/scripts/com/oyunstudyosu/room/RoomLayer.as,"init(), dispose()","Stub layer class for room SWF assets in st01.1."
